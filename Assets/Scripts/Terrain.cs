@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+public class Terrain : MonoBehaviour
 {
     private GameObject player;
     // Start is called before the first frame update
@@ -22,12 +22,6 @@ public class CameraFollow : MonoBehaviour
     }
     private void MoveForward()
     {
-        this.transform.position = new Vector3(player.transform.position.x + 7.38f, player.transform.position.y + 3.22f, transform.position.z);
-
-    }
-    public void GameOver()
-    {
-        transform.LookAt(player.transform);
-        transform.rotation = Quaternion.Euler(0, 0, 0);
+        transform.position = new Vector3(player.transform.position.x + 7.38f, transform.position.y, transform.position.z);
     }
 }
