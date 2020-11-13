@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     private GameObject player;
+    private bool isAlive = true;
     // Start is called before the first frame update
     private void Start()
     {
@@ -22,12 +23,18 @@ public class CameraFollow : MonoBehaviour
     }
     private void MoveForward()
     {
-        this.transform.position = new Vector3(player.transform.position.x + 7.38f, player.transform.position.y + 3.22f, transform.position.z);
+        if (isAlive)
+        {
+            this.transform.position = new Vector3(player.transform.position.x + 7f, player.transform.position.y + 3.22f, transform.position.z);
+        }
+        else
+        {
+            this.transform.position = new Vector3(player.transform.position.x + 1f, player.transform.position.y + 3.22f, transform.position.z);
+        }
 
     }
     public void GameOver()
     {
-        transform.LookAt(player.transform);
-        transform.rotation = Quaternion.Euler(0, 0, 0);
+        isAlive = false;
     }
 }

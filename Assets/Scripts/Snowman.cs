@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class Snowman : MonoBehaviour
 {
-    private CameraFollow cameraFollow;
     // Start is called before the first frame update
     void Start()
     {
-        cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
+        
     }
 
     // Update is called once per frame
@@ -16,8 +15,8 @@ public class GameManager : MonoBehaviour
     {
         
     }
-    public void GameOver()
+    public void Destroy()
     {
-        cameraFollow.GameOver();
+     
     }
 }

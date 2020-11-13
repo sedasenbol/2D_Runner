@@ -7,23 +7,26 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private readonly float forwardVelocity = 10f;
     private bool isJumping = false;
-    private float jumpForce = 7f;
+    private float jumpForce = 7.5f;
     private Animator anim;
     private bool isAlive = true;
-    private CameraFollow cameraFollow;
+    private GameManager gameManager;
     // Start is called before the first frame update
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         anim.Play("Run");
-        cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
     private void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            isJumping = true;
+        }
     }
 
     private void FixedUpdate()
@@ -58,7 +61,7 @@ public class Player : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 8 && isAlive)
+        if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && isAlive)
         {
             GameOver();
         }
@@ -68,6 +71,6 @@ public class Player : MonoBehaviour
         isAlive = false;
         Application.Quit();
         anim.Play("Death");
-        cameraFollow.GameOver();
+        gameManager.GameOver();
     }
 }
