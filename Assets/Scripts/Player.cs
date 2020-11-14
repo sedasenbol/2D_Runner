@@ -11,25 +11,22 @@ public class Player : MonoBehaviour
     private Animator anim;
     private bool isAlive = true;
     private GameManager gameManager;
-    // Start is called before the first frame update
+    private Vector3 prePosition;
+    private int Hearts = 3;
     private void Start()
     {
+        transform.position = new Vector3(-7,-3,-4);
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         anim.Play("Run");
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        prePosition = transform.position;
     }
-
-    // Update is called once per frame
     private void Update()
     {
         if (!isAlive)
         {
             return;
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            isJumping = true;
         }
     }
 
@@ -45,6 +42,7 @@ public class Player : MonoBehaviour
             Jump();
             isJumping = false;
         }
+        ZeroVelocityCheck();
     }
 
     private void MoveForward()
@@ -59,7 +57,11 @@ public class Player : MonoBehaviour
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 9 && Input.GetKey(KeyCode.Space) && isAlive)
+        if (collision.gameObject.layer == 9 && isAlive && ZeroVelocityCheck())
+        {
+            Die();
+        }
+        else if (collision.gameObject.layer == 9 && Input.GetKey(KeyCode.Space) && isAlive)
         {
             isJumping = true;
         }
@@ -68,7 +70,7 @@ public class Player : MonoBehaviour
     {
         if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && isAlive)
         {
-            GameOver();
+            Die();
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -78,11 +80,27 @@ public class Player : MonoBehaviour
             gameManager.GetAndSendCoins();
         }
     }
-    private void GameOver()
+    private void Die()
     {
-        isAlive = false;
-        Application.Quit();
+        Hearts--;
         anim.Play("Death");
-        gameManager.GameOver();
+        isAlive = false;
+        gameManager.IsPlayerDead();
+    }
+    private bool ZeroVelocityCheck()
+    {
+        if (transform.position != prePosition)
+        {
+            prePosition = transform.position;
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    public void PauseSwitch()
+    {
+        isAlive = !isAlive;
     }
 }
