@@ -71,6 +71,13 @@ public class Player : MonoBehaviour
             GameOver();
         }
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == 12)
+        {
+            gameManager.GetAndSendCoins();
+        }
+    }
     private void GameOver()
     {
         isAlive = false;
