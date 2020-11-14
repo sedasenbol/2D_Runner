@@ -22,7 +22,6 @@ public class UIManager : MonoBehaviour
     }
     public void ShowCoins()
     {
-        coinText.text = (int.Parse(coinText.text) + 1).ToString();
-        Debug.Log(int.Parse(coinText.text) + 1);
+        coinText.text = (int.Parse(coinText.text) + 1).ToString("0000");
     }
 }

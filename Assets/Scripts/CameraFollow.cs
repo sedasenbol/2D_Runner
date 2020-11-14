@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
+    private GameManager gameManager;
     private GameObject player;
     private bool isAlive = true;
     // Start is called before the first frame update
+
     private void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gameManager.SendCameraPosition(transform.position);
         player = GameObject.Find("Player");
     }
 
@@ -31,7 +35,7 @@ public class CameraFollow : MonoBehaviour
         {
             this.transform.position = new Vector3(player.transform.position.x + 1f, player.transform.position.y + 3.22f, transform.position.z);
         }
-
+        gameManager.SendCameraPosition(transform.position);
     }
     public void GameOver()
     {

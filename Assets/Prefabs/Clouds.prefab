@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3620848663095952444}
-  - component: {fileID: 3734913016990145879}
+  - component: {fileID: 608967395089468410}
   - component: {fileID: 3620848663080747388}
   - component: {fileID: 3620848663080859868}
   m_Layer: 0
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3734913016990145879
+--- !u!114 &608967395089468410
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,9 +42,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3620848663096449052}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb34150c876bb9847872452536a81e84, type: 3}
+  m_Script: {fileID: 11500000, guid: 22fb16374f4438947a27acd919e18a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraPos: {x: 0, y: 0, z: 0}
 --- !u!198 &3620848663080747388
 ParticleSystem:
   m_ObjectHideFlags: 0
