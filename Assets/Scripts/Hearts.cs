@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Clouds : MonoBehaviour
+public class Hearts : MonoBehaviour
 {
     private GameObject mainCamera;
     // Start is called before the first frame update
@@ -14,6 +14,6 @@ public class Clouds : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = new Vector2(mainCamera.transform.position.x + 6.61f, mainCamera.transform.position.y + 2.65f);
+        transform.position = new Vector2(mainCamera.transform.position.x, mainCamera.transform. position.y);
     }
 }

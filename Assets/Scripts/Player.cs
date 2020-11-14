@@ -23,6 +23,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (!isAlive)
+        {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             isJumping = true;
@@ -49,7 +53,8 @@ public class Player : MonoBehaviour
     }
     private void Jump()
     {
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        //rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         anim.Play("Jump");
     }
     private void OnCollisionStay2D(Collision2D collision)
