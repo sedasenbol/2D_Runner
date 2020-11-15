@@ -17,13 +17,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (gameState.state == GameState.State.Start)
+        uIManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
+        if (new List<GameState.State> { GameState.State.CountDown, GameState.State.Start }.Contains(gameState.state))
         {
             return;
         }
         cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
         player = GameObject.Find("Player").GetComponent<Player>();
-        uIManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
         constantDist1 = GameObject.Find("Mountains").GetComponent<ConstantDistance>();
         constantDist2 = GameObject.Find("UI_Coin").GetComponent<ConstantDistance>();
         constantDist3 = GameObject.Find("Clouds").GetComponent<ConstantDistance>();
@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public void StartCountDown()
     {
         uIManager.isCountDownActive = true;
+        gameState.state = GameState.State.CountDown;
     }
     public void StartGame()
     {

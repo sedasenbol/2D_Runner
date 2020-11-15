@@ -32,36 +32,34 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        ShowOrHideButtons();
-        if (gameManager.StateOfTheGame.state == GameState.State.Start)
+        if (isCountDownActive)
         {
-            if (isCountDownActive)
+            timeLeft -= Time.deltaTime;
+            if (timeLeft < 0)
             {
-                timeLeft -= Time.deltaTime;
-                if (timeLeft < 0)
-                {
-                    gameManager.StartGame();
-                    isCountDownActive = false;
-                    timeLeft = 3;
-                }
-                else if (timeLeft < 1)
-                {
-                    countDownText.text = "1";
-                }
-                else if (timeLeft < 2)
-                {
-                    countDownText.text = "2";
-                }
-                else if (timeLeft < 3)
-                {
-                    countDownText.text = "3";
-                }
+                gameManager.StartGame();
+                isCountDownActive = false;
+                timeLeft = 3;
+            }
+            else if (timeLeft < 1)
+            {
+                countDownText.text = "1";
+            }
+            else if (timeLeft < 2)
+            {
+                countDownText.text = "2";
+            }
+            else if (timeLeft < 3)
+            {
+                countDownText.text = "3";
             }
         }
-        else
+        ShowOrHideButtons();
+        if (new List<GameState.State> {GameState.State.CountDown,GameState.State.Start}.Contains(gameManager.StateOfTheGame.state))
         {
-            ShowCoins();
+            return;
         }
+        ShowCoins();
     }
     private void ShowCoins()
     {
@@ -75,6 +73,10 @@ public class UIManager : MonoBehaviour
             case GameState.State.Start:
                 countDownText.gameObject.SetActive(false);
                 playButton.SetActive(true);
+                break;
+            case GameState.State.CountDown:
+                countDownText.gameObject.SetActive(true);
+                playButton.SetActive(false);
                 break;
             case GameState.State.OnPlay:
                 playButton.SetActive(false);

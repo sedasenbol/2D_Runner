@@ -11,6 +11,7 @@ public class GameState
     public enum State
     {
         Start,
+        CountDown,
         OnPlay, 
         Paused,
         Resuming,
