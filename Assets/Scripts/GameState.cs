@@ -6,7 +6,7 @@ public class GameState
 {
     public int Hearts = 3;
     public int Coins = 0;
-    public State state;
+    public State state = GameState.State.Start;
     public Scene scene; 
     public enum State
     {
@@ -22,7 +22,6 @@ public class GameState
     public enum Scene
     {
         StartMenu,
-        CountDown,
         Game,
     }
 

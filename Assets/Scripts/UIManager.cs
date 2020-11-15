@@ -7,28 +7,61 @@ using System;
 public class UIManager : MonoBehaviour
 {
     private TMPro.TextMeshProUGUI coinText;
+    private TMPro.TextMeshProUGUI countDownText;
     private GameObject playButton;
     private GameObject replayButton;
     private GameObject pauseButton;
     private GameObject resumeButton;
     private GameManager gameManager;
-    // Start is called before the first frame update
+    public bool isCountDownActive;
+    private float timeLeft = 3;
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
-
-        coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();
         playButton = transform.Find("Canvas").Find("Play_Button").gameObject;
+        countDownText = transform.Find("Canvas").Find("Count_Down_Text").GetComponent<TMPro.TextMeshProUGUI>();
+        if (gameManager.StateOfTheGame.state == GameState.State.Start)
+        {
+            return;
+        }
+        coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();      
         replayButton = transform.Find("Canvas").Find("Replay_Button").gameObject;
         pauseButton = transform.Find("Canvas").Find("Pause_Button").gameObject;
         resumeButton = transform.Find("Canvas").Find("Resume_Button").gameObject;
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        ShowCoins();
         ShowOrHideButtons();
+        if (gameManager.StateOfTheGame.state == GameState.State.Start)
+        {
+            if (isCountDownActive)
+            {
+                timeLeft -= Time.deltaTime;
+                if (timeLeft < 0)
+                {
+                    gameManager.StartGame();
+                    isCountDownActive = false;
+                    timeLeft = 3;
+                }
+                else if (timeLeft < 1)
+                {
+                    countDownText.text = "1";
+                }
+                else if (timeLeft < 2)
+                {
+                    countDownText.text = "2";
+                }
+                else if (timeLeft < 3)
+                {
+                    countDownText.text = "3";
+                }
+            }
+        }
+        else
+        {
+            ShowCoins();
+        }
     }
     private void ShowCoins()
     {
@@ -36,8 +69,13 @@ public class UIManager : MonoBehaviour
     }
     private void ShowOrHideButtons()
     {
+        Debug.Log(gameManager.StateOfTheGame.state);
         switch (gameManager.StateOfTheGame.state)
         {
+            case GameState.State.Start:
+                countDownText.gameObject.SetActive(false);
+                playButton.SetActive(true);
+                break;
             case GameState.State.OnPlay:
                 playButton.SetActive(false);
                 replayButton.SetActive(false);

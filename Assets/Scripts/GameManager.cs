@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     private CameraFollow cameraFollow;
     private Player player;
+    private UIManager uIManager;
     private ConstantDistance constantDist1;
     private ConstantDistance constantDist2;
     private ConstantDistance constantDist3;
@@ -15,17 +17,26 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        if (gameState.state == GameState.State.Start)
+        {
+            return;
+        }
         cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
         player = GameObject.Find("Player").GetComponent<Player>();
+        uIManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
         constantDist1 = GameObject.Find("Mountains").GetComponent<ConstantDistance>();
         constantDist2 = GameObject.Find("UI_Coin").GetComponent<ConstantDistance>();
         constantDist3 = GameObject.Find("Clouds").GetComponent<ConstantDistance>();
         constantDist4 = GameObject.Find("Heart_Container").GetComponent<ConstantDistance>();
-        gameState.state = GameState.State.OnPlay;
     }
-    private void Update()
+    public void StartCountDown()
     {
-        
+        uIManager.isCountDownActive = true;
+    }
+    public void StartGame()
+    {
+        gameState.state = GameState.State.OnPlay;
+        SceneManager.LoadScene(1);
     }
     public void IsPlayerDead()
     {
@@ -54,7 +65,7 @@ public class GameManager : MonoBehaviour
         constantDist3.cameraPos = cameraPos;
         constantDist4.cameraPos = cameraPos;
     }
-    public void PauseSwitch()
+    private void PauseSwitch()
     {
         if (gameState.state == GameState.State.Paused)
         {
@@ -67,7 +78,7 @@ public class GameManager : MonoBehaviour
         }
         Time.timeScale = Mathf.Abs(Time.timeScale-1);
     }
-    public void ReplayGame()
+    private void ReplayGame()
     {
         player.StartAgain();
         if (gameState.state == GameState.State.IsDead)

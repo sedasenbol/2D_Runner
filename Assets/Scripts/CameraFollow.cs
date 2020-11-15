@@ -7,16 +7,12 @@ public class CameraFollow : MonoBehaviour
     private GameManager gameManager;
     private GameObject player;
     public bool isPlayerAlive = true;
-    // Start is called before the first frame update
-
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         gameManager.SendCameraPosition(transform.position);
         player = GameObject.Find("Player");
     }
-
-    // Update is called once per frame
     private void Update()
     {
         
