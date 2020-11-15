@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private CameraFollow cameraFollow;
+    private Player player;
     private ConstantDistance constantDist1;
     private ConstantDistance constantDist2;
     private ConstantDistance constantDist3;
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
+        player = GameObject.Find("Player").GetComponent<Player>();
         constantDist1 = GameObject.Find("Mountains").GetComponent<ConstantDistance>();
         constantDist2 = GameObject.Find("UI_Coin").GetComponent<ConstantDistance>();
         constantDist3 = GameObject.Find("Clouds").GetComponent<ConstantDistance>();
@@ -28,7 +30,7 @@ public class GameManager : MonoBehaviour
     public void IsPlayerDead()
     {
         gameState.Hearts--;
-        cameraFollow.isAlive = true;
+        cameraFollow.isPlayerAlive = false;
         gameState.state = GameState.State.IsDead;
         Time.timeScale = 0;
         if (gameState.Hearts == 0)
@@ -53,6 +55,7 @@ public class GameManager : MonoBehaviour
         if (gameState.state == GameState.State.Paused)
         {
             gameState.state = GameState.State.Resuming;
+            gameState.state = GameState.State.OnPlay;
         }
         else 
         {
@@ -60,14 +63,18 @@ public class GameManager : MonoBehaviour
         }
         Time.timeScale = Mathf.Abs(Time.timeScale-1);
     }
-    public void ReplayGame() //tamamla
+    public void ReplayGame()
     {
+        player.StartAgain();
         if (gameState.state == GameState.State.IsDead)
         {
             gameState.state = GameState.State.Replaying;
+            gameState.state = GameState.State.OnPlay;
         }
         else
         {
+            gameState.Hearts = 3;
+            gameState.Coins = 0;
             gameState.state = GameState.State.Restarted;
             gameState.state = GameState.State.OnPlay;
         }

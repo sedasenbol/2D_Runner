@@ -18,7 +18,7 @@ public class UIManager : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
 
         coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();
-        replayButton = transform.Find("Canvas").Find("Play_Button").gameObject;
+        playButton = transform.Find("Canvas").Find("Play_Button").gameObject;
         replayButton = transform.Find("Canvas").Find("Replay_Button").gameObject;
         pauseButton = transform.Find("Canvas").Find("Pause_Button").gameObject;
         resumeButton = transform.Find("Canvas").Find("Resume_Button").gameObject;
@@ -48,14 +48,14 @@ public class UIManager : MonoBehaviour
             case GameState.State.Paused:
                 playButton.SetActive(false);
                 replayButton.SetActive(false);
-                pauseButton.SetActive(true);
-                resumeButton.SetActive(false);
+                pauseButton.SetActive(false);
+                resumeButton.SetActive(true);
                 break;
             case GameState.State.Resuming:
                 playButton.SetActive(false);
                 replayButton.SetActive(false);
-                pauseButton.SetActive(false);
-                resumeButton.SetActive(true);
+                pauseButton.SetActive(true);
+                resumeButton.SetActive(false);
                 break;
             case GameState.State.IsDead:
                 playButton.SetActive(false);
@@ -81,6 +81,8 @@ public class UIManager : MonoBehaviour
                 pauseButton.SetActive(true);
                 resumeButton.SetActive(false);
                 break;
+            default:
+                throw new Exception(String.Format("Unknown state:", gameManager.StateOfTheGame.state));
         }
     }
 }

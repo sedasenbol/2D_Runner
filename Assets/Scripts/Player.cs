@@ -23,14 +23,17 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
-        if (new List<GameState.State>{GameState.State.OnPlay, GameState.State.Restarted,GameState.State.Replaying}.Contains(gameManager.StateOfTheGame.state))
+        if (new List<GameState.State> {GameState.State.OnPlay, GameState.State.Restarted,GameState.State.Replaying}.Contains(gameManager.StateOfTheGame.state))
         {
             isAlive = true;
         }
-        else
+        else if (new List<GameState.State> { GameState.State.IsDead, GameState.State.GameOver }.Contains(gameManager.StateOfTheGame.state))
         {
+            isAlive = false;
+            anim.Play("Dead");
             return;
         }
+
     }
 
     private void FixedUpdate()
@@ -62,7 +65,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.layer == 9 && isAlive && ZeroVelocityCheck())
         {
-            Die();
+            gameManager.IsPlayerDead();
         }
         else if (collision.gameObject.layer == 9 && Input.GetKey(KeyCode.Space) && isAlive)
         {
@@ -73,7 +76,7 @@ public class Player : MonoBehaviour
     {
         if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && isAlive)
         {
-            Die();
+            gameManager.IsPlayerDead();
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -82,12 +85,6 @@ public class Player : MonoBehaviour
         {
             gameManager.GetCoins();
         }
-    }
-    private void Die()
-    {
-        anim.Play("Death");
-        isAlive = false;
-        gameManager.IsPlayerDead();
     }
     private bool ZeroVelocityCheck()
     {
@@ -100,5 +97,10 @@ public class Player : MonoBehaviour
         {
             return true;
         }
+    }
+    public void StartAgain()
+    {
+        transform.position = new Vector3(-7, -3, -4);
+        anim.Play("Run");
     }
 }

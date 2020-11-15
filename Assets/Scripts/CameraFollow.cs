@@ -6,7 +6,7 @@ public class CameraFollow : MonoBehaviour
 {
     private GameManager gameManager;
     private GameObject player;
-    public bool isAlive = false;
+    public bool isPlayerAlive = true;
     // Start is called before the first frame update
 
     private void Start()
@@ -27,7 +27,7 @@ public class CameraFollow : MonoBehaviour
     }
     private void MoveForward()
     {
-        if (!isAlive)
+        if (isPlayerAlive)
         {
             this.transform.position = new Vector3(player.transform.position.x + 7f, player.transform.position.y + 3.22f, transform.position.z);
         }
