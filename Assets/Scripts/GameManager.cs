@@ -4,28 +4,22 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private UIManager uIManager;
-    private int coins = 0;
-    private bool isAlive = true;
-    private int playerHearts;
     private CameraFollow cameraFollow;
     private ConstantDistance constantDist1;
     private ConstantDistance constantDist2;
     private ConstantDistance constantDist3;
     private ConstantDistance constantDist4;
-    private Player player;
-    private bool isGameOver = false;
-
+    private GameState gameState = new GameState();
+    public GameState StateOfTheGame => gameState;
 
     private void Start()
     {
         cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
-        player = GameObject.Find("Player").GetComponent<Player>();
-        uIManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
         constantDist1 = GameObject.Find("Mountains").GetComponent<ConstantDistance>();
         constantDist2 = GameObject.Find("UI_Coin").GetComponent<ConstantDistance>();
         constantDist3 = GameObject.Find("Clouds").GetComponent<ConstantDistance>();
         constantDist4 = GameObject.Find("Heart_Container").GetComponent<ConstantDistance>();
+        gameState.state = GameState.State.OnPlay;
     }
     private void Update()
     {
@@ -33,20 +27,19 @@ public class GameManager : MonoBehaviour
     }
     public void IsPlayerDead()
     {
-        playerHearts--;
+        gameState.Hearts--;
         cameraFollow.isAlive = true;
-        uIManager.IsPlayerDead();
-        isAlive = false;
-        if (playerHearts == 0) //düşün
+        gameState.state = GameState.State.IsDead;
+        Time.timeScale = 0;
+        if (gameState.Hearts == 0)
         {
-            Time.timeScale = 0;
+            gameState.state = GameState.State.GameOver;
             Application.Quit();
         }
     }
-    public void GetAndSendCoins()
+    public void GetCoins()
     {
-        coins++;
-        uIManager.ShowCoins();
+        gameState.Coins++;
     }
     public void SendCameraPosition(Vector3 cameraPos)
     {
@@ -57,18 +50,27 @@ public class GameManager : MonoBehaviour
     }
     public void PauseSwitch()
     {
-        isAlive = !isAlive;
+        if (gameState.state == GameState.State.Paused)
+        {
+            gameState.state = GameState.State.Resuming;
+        }
+        else 
+        {
+            gameState.state = GameState.State.Paused; 
+        }
         Time.timeScale = Mathf.Abs(Time.timeScale-1);
-        player.PauseSwitch();
-        uIManager.PauseSwitch();
     }
     public void ReplayGame() //tamamla
     {
-        isAlive = true;
-        if (isGameOver)
+        if (gameState.state == GameState.State.IsDead)
         {
-            isGameOver = false;
-
+            gameState.state = GameState.State.Replaying;
         }
+        else
+        {
+            gameState.state = GameState.State.Restarted;
+            gameState.state = GameState.State.OnPlay;
+        }
+        Time.timeScale = 1;
     }
 }

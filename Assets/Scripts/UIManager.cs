@@ -7,45 +7,80 @@ using System;
 public class UIManager : MonoBehaviour
 {
     private TMPro.TextMeshProUGUI coinText;
+    private GameObject playButton;
     private GameObject replayButton;
     private GameObject pauseButton;
     private GameObject resumeButton;
-    private bool isAlive = true;
+    private GameManager gameManager;
     // Start is called before the first frame update
     private void Start()
     {
-        coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();
-        coinText.gameObject.SetActive(true);
-        coinText.text = 0.ToString();
+        gameManager = FindObjectOfType<GameManager>();
 
+        coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();
+        replayButton = transform.Find("Canvas").Find("Play_Button").gameObject;
         replayButton = transform.Find("Canvas").Find("Replay_Button").gameObject;
         pauseButton = transform.Find("Canvas").Find("Pause_Button").gameObject;
         resumeButton = transform.Find("Canvas").Find("Resume_Button").gameObject;
-
-        replayButton.SetActive(false);
-        pauseButton.SetActive(true);
-        resumeButton.SetActive(false);
     }
 
     // Update is called once per frame
     private void Update()
     {
-        
+        ShowCoins();
+        ShowOrHideButtons();
     }
-    public void ShowCoins()
+    private void ShowCoins()
     {
-        coinText.text = (int.Parse(coinText.text) + 1).ToString("00000");
+        coinText.text = (gameManager.StateOfTheGame.Coins).ToString("00000");
     }
-    public void IsPlayerDead()
+    private void ShowOrHideButtons()
     {
-        replayButton.SetActive(true);
-        pauseButton.SetActive(false);
-        resumeButton.SetActive(false);
-    }
-    public void PauseSwitch()
-    {
-        isAlive = !isAlive;
-        pauseButton.SetActive(isAlive);
-        resumeButton.SetActive(!isAlive);
+        switch (gameManager.StateOfTheGame.state)
+        {
+            case GameState.State.OnPlay:
+                playButton.SetActive(false);
+                replayButton.SetActive(false);
+                pauseButton.SetActive(true);
+                resumeButton.SetActive(false);
+                coinText.gameObject.SetActive(true);
+                break;
+            case GameState.State.Paused:
+                playButton.SetActive(false);
+                replayButton.SetActive(false);
+                pauseButton.SetActive(true);
+                resumeButton.SetActive(false);
+                break;
+            case GameState.State.Resuming:
+                playButton.SetActive(false);
+                replayButton.SetActive(false);
+                pauseButton.SetActive(false);
+                resumeButton.SetActive(true);
+                break;
+            case GameState.State.IsDead:
+                playButton.SetActive(false);
+                replayButton.SetActive(true);
+                pauseButton.SetActive(false);
+                resumeButton.SetActive(false);
+                break;
+            case GameState.State.Replaying:
+                playButton.SetActive(false);
+                replayButton.SetActive(false);
+                pauseButton.SetActive(true);
+                resumeButton.SetActive(false);
+                break;
+            case GameState.State.GameOver:
+                playButton.SetActive(true);
+                replayButton.SetActive(false);
+                pauseButton.SetActive(false);
+                resumeButton.SetActive(false);
+                break;
+            case GameState.State.Restarted:
+                playButton.SetActive(false);
+                replayButton.SetActive(false);
+                pauseButton.SetActive(true);
+                resumeButton.SetActive(false);
+                break;
+        }
     }
 }

@@ -12,19 +12,22 @@ public class Player : MonoBehaviour
     private bool isAlive = true;
     private GameManager gameManager;
     private Vector3 prePosition;
-    private int Hearts = 3;
     private void Start()
     {
         transform.position = new Vector3(-7,-3,-4);
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         anim.Play("Run");
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
         prePosition = transform.position;
     }
     private void Update()
     {
-        if (!isAlive)
+        if (new List<GameState.State>{GameState.State.OnPlay, GameState.State.Restarted,GameState.State.Replaying}.Contains(gameManager.StateOfTheGame.state))
+        {
+            isAlive = true;
+        }
+        else
         {
             return;
         }
@@ -75,14 +78,13 @@ public class Player : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == 12)
+        if (collision.gameObject.layer == 12 && isAlive)
         {
-            gameManager.GetAndSendCoins();
+            gameManager.GetCoins();
         }
     }
     private void Die()
     {
-        Hearts--;
         anim.Play("Death");
         isAlive = false;
         gameManager.IsPlayerDead();
@@ -98,9 +100,5 @@ public class Player : MonoBehaviour
         {
             return true;
         }
-    }
-    public void PauseSwitch()
-    {
-        isAlive = !isAlive;
     }
 }
