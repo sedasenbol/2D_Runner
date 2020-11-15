@@ -43,6 +43,10 @@ public class GameManager : MonoBehaviour
     {
         gameState.Coins++;
     }
+    public void GetHearts()
+    {
+        gameState.Hearts++;
+    }
     public void SendCameraPosition(Vector3 cameraPos)
     {
         constantDist1.cameraPos = cameraPos;

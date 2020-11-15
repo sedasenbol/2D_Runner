@@ -10,6 +10,7 @@ public class GameState
     public Scene scene; 
     public enum State
     {
+        Start,
         OnPlay, 
         Paused,
         Resuming,

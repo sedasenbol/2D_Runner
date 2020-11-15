@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
     private readonly float forwardVelocity = 10f;
     private bool isJumping = false;
     private bool isGrounded = true;
-    private float jumpForce = 300f;
     private Animator anim;
     private bool isAlive = true;
     private GameManager gameManager;
@@ -114,6 +113,10 @@ public class Player : MonoBehaviour
         if (collision.gameObject.layer == 12 && isAlive)
         {
             gameManager.GetCoins();
+        }
+        if (collision.gameObject.layer == 13 && isAlive)
+        {
+            gameManager.GetHearts();
         }
     }
     private bool ZeroVelocityCheck()
