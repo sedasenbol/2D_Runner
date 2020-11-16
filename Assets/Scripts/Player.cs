@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     private Vector3 prePosition;
     private void Start()
     {
-        transform.position = new Vector3(-7,-3,-4);
+        transform.position = new Vector3(-17,-4,-4);
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         anim.Play("Run");
@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
     {
         for (int i=0; i< 10; i++)
         {
-            transform.position = transform.position + new Vector3(0.01f, 0.5f,0);
+            transform.position = transform.position + new Vector3(0.01f, 0.4f,0);
             if (isGrounded)
             {
                 break;
@@ -70,7 +70,7 @@ public class Player : MonoBehaviour
             {
                 break;
             }
-            transform.position = transform.position - new Vector3(-0.01f, 0.5f, 0);
+            transform.position = transform.position - new Vector3(-0.01f, 0.4f, 0);
             yield return new WaitForEndOfFrame();
         }
         isJumping = false;
@@ -79,7 +79,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.layer == 9 && gameManager.StateOfTheGame.isAlive && ZeroVelocityCheck())
         {
-            Debug.Log("Dead");
+            anim.Play("Death");
             gameManager.IsPlayerDead();
         }
         else if (collision.gameObject.layer == 9)
@@ -96,7 +96,7 @@ public class Player : MonoBehaviour
         if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.isAlive)
         {
             gameManager.IsPlayerDead();
-            anim.Play("Dead");
+            anim.Play("Death");
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
