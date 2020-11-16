@@ -38,11 +38,13 @@ public class Player : MonoBehaviour
         if (isJumping)
         {
             StartCoroutine(Jump());
+            gameManager.IncreaseScore();
             anim.Play("Jump");
         }
         else
         {
             MoveForward();
+            gameManager.IncreaseScore();
         }
         ZeroVelocityCheck();
     }

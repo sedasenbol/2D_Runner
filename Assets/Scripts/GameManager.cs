@@ -38,6 +38,11 @@ public class GameManager : MonoBehaviour
         gameState.isAlive = true;
         SceneManager.LoadScene(1);
     }
+    public void IncreaseScore()
+    {
+        gameState.score++;
+    }
+
     public void IsPlayerDead()
     {
         gameState.Hearts--;
