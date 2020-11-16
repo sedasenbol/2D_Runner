@@ -9,7 +9,7 @@ public class SpawnManager : MonoBehaviour
     private GameObject starCoin;
     private GameObject heart;
     private GameObject snowman;
-    private Vector3 spawningPoint = Vector3.zero;
+    private Vector3 spawningPoint = new Vector3(9.3f,-4.53f,-4f);
     private Vector3 platformLength = new Vector3(5f,0f,0f);
     private Vector3 verticalGap;
     private Vector3 horizontalGap;
@@ -27,7 +27,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (player.transform.position.x + spawnDistance.x >= spawningPoint.x)
         {
-            spawningPoint += SpawnPlatformNext(player.transform.position + playerHorizontalDistance + spawnDistance);
+            spawningPoint += SpawnPlatformNext(spawningPoint);
         }
         
     }

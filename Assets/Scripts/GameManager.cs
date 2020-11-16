@@ -25,8 +25,11 @@ public class GameManager : MonoBehaviour
             return;
         }
         player = GameObject.Find("Player").GetComponent<Player>();
-        GetComponent<SpawnManager>().SpawnPlatforms();
         constantDist = FindObjectsOfType<ConstantDistance>();
+    }
+    private void Update()
+    {
+        GetComponent<SpawnManager>().SpawnPlatforms();
     }
     public void StartCountDown()
     {
