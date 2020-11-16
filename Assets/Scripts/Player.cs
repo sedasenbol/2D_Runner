@@ -33,7 +33,6 @@ public class Player : MonoBehaviour
     {
         if (!gameManager.StateOfTheGame.isAlive)
         {
-            Debug.Log("OMG");
             return;
         }
         if (isJumping)
@@ -56,7 +55,7 @@ public class Player : MonoBehaviour
     {
         for (int i=0; i< 10; i++)
         {
-            transform.position = transform.position + new Vector3(0.01f, 0.6f,0);
+            transform.position = transform.position + new Vector3(0.01f, 0.5f,0);
             if (isGrounded)
             {
                 break;
@@ -69,20 +68,19 @@ public class Player : MonoBehaviour
             {
                 break;
             }
-            transform.position = transform.position - new Vector3(-0.01f, 0.6f, 0);
+            transform.position = transform.position - new Vector3(-0.01f, 0.5f, 0);
             yield return new WaitForEndOfFrame();
         }
         isJumping = false;
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
-        /*if (collision.gameObject.layer == 9 && isAlive && ZeroVelocityCheck())
+        if (collision.gameObject.layer == 9 && gameManager.StateOfTheGame.isAlive && ZeroVelocityCheck())
         {
             Debug.Log("Dead");
             gameManager.IsPlayerDead();
         }
-        else*/
-        if (collision.gameObject.layer == 9)
+        else if (collision.gameObject.layer == 9)
         {
             isGrounded = true;
         }
@@ -112,7 +110,7 @@ public class Player : MonoBehaviour
     }
     private bool ZeroVelocityCheck()
     {
-        if (transform.position.x != prePosition.x)
+        if (rb.velocity != new Vector2(0,0))
         {
             prePosition = transform.position;
             return false;
