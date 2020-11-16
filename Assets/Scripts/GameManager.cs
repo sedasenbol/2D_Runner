@@ -14,12 +14,12 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         uIManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
-        if (SceneManager.GetActiveScene().name == "Game")
+        if (SceneManager.GetActiveScene().name == "Start")
         {
-            gameState.state = GameState.State.OnPlay;
-            gameState.isAlive = true;
+            gameState.state = GameState.State.Start;
+            gameState.scene = GameState.Scene.Start;
+            gameState.isAlive = false;
         }
-
         if (!gameState.isAlive)
         {
             return;
@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour
     }
     public void StartCountDown()
     {
-        gameState.isAlive = false;
         uIManager.isCountDownActive = true;
         gameState.state = GameState.State.CountDown;
     }

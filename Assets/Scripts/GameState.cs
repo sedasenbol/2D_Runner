@@ -6,9 +6,9 @@ public class GameState
 {
     public int Hearts = 3;
     public int Coins = 0;
-    public State state = GameState.State.Start;
-    public Scene scene;
-    public bool isAlive = false;
+    public State state = State.OnPlay;
+    public Scene scene = Scene.Game;
+    public bool isAlive = true;
     public enum State
     {
         Start,
@@ -23,7 +23,7 @@ public class GameState
     }
     public enum Scene
     {
-        StartMenu,
+        Start,
         Game,
     }
 }
