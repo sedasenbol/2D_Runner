@@ -5,51 +5,52 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private CameraFollow cameraFollow;
     private Player player;
     private UIManager uIManager;
-    private ConstantDistance constantDist1;
-    private ConstantDistance constantDist2;
-    private ConstantDistance constantDist3;
-    private ConstantDistance constantDist4;
+    private ConstantDistance[] constantDist;
     private GameState gameState = new GameState();
     public GameState StateOfTheGame => gameState;
 
     private void Start()
     {
         uIManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
-        if (new List<GameState.State> { GameState.State.CountDown, GameState.State.Start }.Contains(gameState.state))
+        if (SceneManager.GetActiveScene().name == "Game")
+        {
+            gameState.state = GameState.State.OnPlay;
+            gameState.isAlive = true;
+        }
+
+        if (!gameState.isAlive)
         {
             return;
         }
-        cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
         player = GameObject.Find("Player").GetComponent<Player>();
-        constantDist1 = GameObject.Find("Mountains").GetComponent<ConstantDistance>();
-        constantDist2 = GameObject.Find("UI_Coin").GetComponent<ConstantDistance>();
-        constantDist3 = GameObject.Find("Clouds").GetComponent<ConstantDistance>();
-        constantDist4 = GameObject.Find("Heart_Container").GetComponent<ConstantDistance>();
+        constantDist = FindObjectsOfType<ConstantDistance>();
     }
     public void StartCountDown()
     {
+        gameState.isAlive = false;
         uIManager.isCountDownActive = true;
         gameState.state = GameState.State.CountDown;
     }
     public void StartGame()
     {
         gameState.state = GameState.State.OnPlay;
+        gameState.isAlive = true;
         SceneManager.LoadScene(1);
     }
     public void IsPlayerDead()
     {
         gameState.Hearts--;
-        cameraFollow.isPlayerAlive = false;
-        gameState.state = GameState.State.IsDead;
+        gameState.isAlive = false;
         Time.timeScale = 0;
         if (gameState.Hearts == 0)
         {
             gameState.state = GameState.State.GameOver;
             Application.Quit();
+            return;
         }
+        gameState.state = GameState.State.IsDead;
     }
     public void GetCoins()
     {
@@ -61,10 +62,10 @@ public class GameManager : MonoBehaviour
     }
     public void SendCameraPosition(Vector3 cameraPos)
     {
-        constantDist1.cameraPos = cameraPos;
-        constantDist2.cameraPos = cameraPos;
-        constantDist3.cameraPos = cameraPos;
-        constantDist4.cameraPos = cameraPos;
+        for (int i = 0; i< constantDist.Length; i++)
+        {
+            constantDist[i].cameraPos = cameraPos;
+        }
     }
     private void PauseSwitch()
     {
@@ -72,9 +73,11 @@ public class GameManager : MonoBehaviour
         {
             gameState.state = GameState.State.Resuming;
             gameState.state = GameState.State.OnPlay;
+            gameState.isAlive = true;
         }
         else 
         {
+            gameState.isAlive = false;
             gameState.state = GameState.State.Paused; 
         }
         Time.timeScale = Mathf.Abs(Time.timeScale-1);
@@ -86,6 +89,7 @@ public class GameManager : MonoBehaviour
         {
             gameState.state = GameState.State.Replaying;
             gameState.state = GameState.State.OnPlay;
+            gameState.isAlive = true;
         }
         else
         {
@@ -93,6 +97,7 @@ public class GameManager : MonoBehaviour
             gameState.Coins = 0;
             gameState.state = GameState.State.Restarted;
             gameState.state = GameState.State.OnPlay;
+            gameState.isAlive = true;
         }
         Time.timeScale = 1;
     }

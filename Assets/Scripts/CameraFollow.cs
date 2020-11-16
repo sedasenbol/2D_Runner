@@ -6,7 +6,6 @@ public class CameraFollow : MonoBehaviour
 {
     private GameManager gameManager;
     private GameObject player;
-    public bool isPlayerAlive = true;
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -23,13 +22,13 @@ public class CameraFollow : MonoBehaviour
     }
     private void MoveForward()
     {
-        if (isPlayerAlive)
+        if (gameManager.StateOfTheGame.isAlive)
         {
-            this.transform.position = new Vector3(player.transform.position.x + 7f, player.transform.position.y + 3.22f, transform.position.z);
+            transform.position = new Vector3(player.transform.position.x + 7f, player.transform.position.y + 3.22f, transform.position.z);
         }
         else
         {
-            this.transform.position = new Vector3(player.transform.position.x + 1f, player.transform.position.y + 3.22f, transform.position.z);
+            transform.position = new Vector3(player.transform.position.x + 1f, player.transform.position.y + 3.22f, transform.position.z);
         }
         gameManager.SendCameraPosition(transform.position);
     }

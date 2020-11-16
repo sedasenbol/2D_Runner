@@ -9,7 +9,6 @@ public class Player : MonoBehaviour
     private bool isJumping = false;
     private bool isGrounded = true;
     private Animator anim;
-    private bool isAlive = true;
     private GameManager gameManager;
     private Vector3 prePosition;
     private void Start()
@@ -23,17 +22,7 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
-        if (new List<GameState.State> {GameState.State.OnPlay, GameState.State.Restarted,GameState.State.Replaying}.Contains(gameManager.StateOfTheGame.state))
-        {
-            isAlive = true;
-        }
-        else if (new List<GameState.State> { GameState.State.IsDead, GameState.State.GameOver }.Contains(gameManager.StateOfTheGame.state))
-        {
-            isAlive = false;
-            anim.Play("Dead");
-            return;
-        }
-        if (Input.GetKey(KeyCode.Space) && isGrounded && isAlive)
+        if (Input.GetKey(KeyCode.Space) && isGrounded && gameManager.StateOfTheGame.isAlive)
         {
             isJumping = true;
         }
@@ -42,8 +31,9 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isAlive)
+        if (!gameManager.StateOfTheGame.isAlive)
         {
+            Debug.Log("OMG");
             return;
         }
         if (isJumping)
@@ -103,18 +93,19 @@ public class Player : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && isAlive)
+        if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.isAlive)
         {
             gameManager.IsPlayerDead();
+            anim.Play("Dead");
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == 12 && isAlive)
+        if (collision.gameObject.layer == 12 && gameManager.StateOfTheGame.isAlive)
         {
             gameManager.GetCoins();
         }
-        if (collision.gameObject.layer == 13 && isAlive)
+        if (collision.gameObject.layer == 13 && gameManager.StateOfTheGame.isAlive)
         {
             gameManager.GetHearts();
         }

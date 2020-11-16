@@ -7,12 +7,13 @@ public class GameState
     public int Hearts = 3;
     public int Coins = 0;
     public State state = GameState.State.Start;
-    public Scene scene; 
+    public Scene scene;
+    public bool isAlive = false;
     public enum State
     {
         Start,
         CountDown,
-        OnPlay, 
+        OnPlay,
         Paused,
         Resuming,
         IsDead,
@@ -25,6 +26,4 @@ public class GameState
         StartMenu,
         Game,
     }
-
-
 }

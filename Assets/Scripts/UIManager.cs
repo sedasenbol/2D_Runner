@@ -20,10 +20,6 @@ public class UIManager : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         playButton = transform.Find("Canvas").Find("Play_Button").gameObject;
         countDownText = transform.Find("Canvas").Find("Count_Down_Text").GetComponent<TMPro.TextMeshProUGUI>();
-        if (gameManager.StateOfTheGame.state == GameState.State.Start)
-        {
-            return;
-        }
         coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();      
         replayButton = transform.Find("Canvas").Find("Replay_Button").gameObject;
         pauseButton = transform.Find("Canvas").Find("Pause_Button").gameObject;
@@ -55,7 +51,7 @@ public class UIManager : MonoBehaviour
             }
         }
         ShowOrHideButtons();
-        if (new List<GameState.State> {GameState.State.CountDown,GameState.State.Start}.Contains(gameManager.StateOfTheGame.state))
+        if (!gameManager.StateOfTheGame.isAlive)
         {
             return;
         }
@@ -67,18 +63,26 @@ public class UIManager : MonoBehaviour
     }
     private void ShowOrHideButtons()
     {
-        Debug.Log(gameManager.StateOfTheGame.state);
         switch (gameManager.StateOfTheGame.state)
         {
             case GameState.State.Start:
                 countDownText.gameObject.SetActive(false);
                 playButton.SetActive(true);
+                replayButton.SetActive(false);
+                pauseButton.SetActive(false);
+                resumeButton.SetActive(false);
+                coinText.gameObject.SetActive(false);
                 break;
             case GameState.State.CountDown:
                 countDownText.gameObject.SetActive(true);
                 playButton.SetActive(false);
+                replayButton.SetActive(false);
+                pauseButton.SetActive(false);
+                resumeButton.SetActive(false);
+                coinText.gameObject.SetActive(false);
                 break;
             case GameState.State.OnPlay:
+                countDownText.gameObject.SetActive(false);
                 playButton.SetActive(false);
                 replayButton.SetActive(false);
                 pauseButton.SetActive(true);
@@ -86,40 +90,52 @@ public class UIManager : MonoBehaviour
                 coinText.gameObject.SetActive(true);
                 break;
             case GameState.State.Paused:
+                countDownText.gameObject.SetActive(false);
                 playButton.SetActive(false);
                 replayButton.SetActive(false);
                 pauseButton.SetActive(false);
                 resumeButton.SetActive(true);
+                coinText.gameObject.SetActive(true);
                 break;
             case GameState.State.Resuming:
+                countDownText.gameObject.SetActive(false);
                 playButton.SetActive(false);
                 replayButton.SetActive(false);
                 pauseButton.SetActive(true);
                 resumeButton.SetActive(false);
+                coinText.gameObject.SetActive(false);
                 break;
             case GameState.State.IsDead:
+                countDownText.gameObject.SetActive(false);
                 playButton.SetActive(false);
                 replayButton.SetActive(true);
                 pauseButton.SetActive(false);
                 resumeButton.SetActive(false);
+                coinText.gameObject.SetActive(true);
                 break;
             case GameState.State.Replaying:
+                countDownText.gameObject.SetActive(false);
                 playButton.SetActive(false);
                 replayButton.SetActive(false);
                 pauseButton.SetActive(true);
                 resumeButton.SetActive(false);
+                coinText.gameObject.SetActive(true);
                 break;
             case GameState.State.GameOver:
+                countDownText.gameObject.SetActive(false);
                 playButton.SetActive(true);
                 replayButton.SetActive(false);
                 pauseButton.SetActive(false);
                 resumeButton.SetActive(false);
+                coinText.gameObject.SetActive(true);
                 break;
             case GameState.State.Restarted:
+                countDownText.gameObject.SetActive(false);
                 playButton.SetActive(false);
                 replayButton.SetActive(false);
                 pauseButton.SetActive(true);
                 resumeButton.SetActive(false);
+                coinText.gameObject.SetActive(true);
                 break;
             default:
                 throw new Exception(String.Format("Unknown state:", gameManager.StateOfTheGame.state));
