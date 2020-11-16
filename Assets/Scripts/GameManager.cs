@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        GetComponent<SpawnManager>().SpawnPlatforms();
+        GetComponent<SpawnManager>().Spawn();
     }
     public void StartCountDown()
     {

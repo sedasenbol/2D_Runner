@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hearts : MonoBehaviour
+public class DestroyOnTrigger : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {

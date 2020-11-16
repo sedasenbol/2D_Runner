@@ -22,8 +22,9 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Space) && isGrounded && gameManager.StateOfTheGame.isAlive)
+        if (Input.GetKey(KeyCode.Space) && isGrounded && gameManager.StateOfTheGame.isAlive && !isJumping)
         {
+            isGrounded = false;
             isJumping = true;
         }
 
@@ -37,15 +38,18 @@ public class Player : MonoBehaviour
         }
         if (isJumping)
         {
+            rb.velocity = new Vector2(0, 0);
             StartCoroutine(Jump());
-            gameManager.IncreaseScore();
+            isGrounded = false;
+            //rb.AddForce(new Vector2(0, rb.velocity.x*4));
+            //isJumping = false;
             anim.Play("Jump");
         }
-        else
+        else if (isGrounded)
         {
             MoveForward();
-            gameManager.IncreaseScore();
         }
+        gameManager.IncreaseScore();
         ZeroVelocityCheck();
     }
 
@@ -55,38 +59,40 @@ public class Player : MonoBehaviour
     }
     private IEnumerator Jump()
     {
-        for (int i=0; i< 10; i++)
+        float startingYPos = transform.position.y;
+        while (!isGrounded && isJumping)
         {
-            transform.position = transform.position + new Vector3(0.01f, 0.4f,0);
-            if (isGrounded)
+            for (int i = 0; i<30; i++)
             {
-                break;
+                rb.velocity = new Vector2(rb.velocity.x, 5);
+                //rb.AddForce(new Vector2(0, -20));
+                yield return new WaitForEndOfFrame();
             }
-            yield return new WaitForEndOfFrame();
-        }
-        for (int i = 0; i < 10; i++)
-        {
-            if (isGrounded)
+            rb.velocity = new Vector2(0,0);
+            for (int i=1; i<30; i++)
             {
-                break;
+                rb.velocity = new Vector2(rb.velocity.x, -5);
+                //rb.AddForce(new Vector2(0, -20));
+                yield return new WaitForEndOfFrame();
             }
-            transform.position = transform.position - new Vector3(-0.01f, 0.4f, 0);
-            yield return new WaitForEndOfFrame();
-        }
-        isJumping = false;
+        }    
+        isJumping = false;   
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 9 && gameManager.StateOfTheGame.isAlive && ZeroVelocityCheck())
+        /*if (collision.gameObject.layer == 9 && gameManager.StateOfTheGame.isAlive && ZeroVelocityCheck())
         {
             anim.Play("Death");
             gameManager.IsPlayerDead();
         }
-        else if (collision.gameObject.layer == 9)
+        else*/ if (collision.gameObject.layer == 9)
         {
             isGrounded = true;
         }
-        else
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == 9)
         {
             isGrounded = false;
         }
@@ -97,6 +103,10 @@ public class Player : MonoBehaviour
         {
             gameManager.IsPlayerDead();
             anim.Play("Death");
+        }
+        if(collision.gameObject.layer == 9 && !ZeroVelocityCheck())
+        {
+            isGrounded = true;
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -115,6 +125,10 @@ public class Player : MonoBehaviour
         if (rb.velocity != new Vector2(0,0))
         {
             prePosition = transform.position;
+            return false;
+        }
+        else if (!isJumping && !isGrounded)
+        {
             return false;
         }
         else

@@ -9,12 +9,17 @@ public class SpawnManager : MonoBehaviour
     private GameObject starCoin;
     private GameObject heart;
     private GameObject snowman;
+    private GameObject diamond;
     private Vector3 spawningPoint = new Vector3(9.3f,-4.53f,-4f);
     private Vector3 platformLength = new Vector3(5f,0f,0f);
     private Vector3 verticalGap = new Vector3(2f,0f,0f);
     private Vector3 horizontalGap = new Vector3(0f,2f,0f);
-    private Vector3 playerHorizontalDistance = new Vector3(0f,-0.53f,0f);
     private Vector3 spawnDistance = new Vector3(26.25f,0f,0f);
+    private List<GameObject> platformList;
+    private List<GameObject> heartList;
+    private List<GameObject> snowmanList;
+    private List<GameObject> starCoinList;
+    private List<GameObject> diamondList;
     private void Start()
     {
         player = GameObject.Find("Player");
@@ -22,16 +27,18 @@ public class SpawnManager : MonoBehaviour
         starCoin = Resources.Load("Prefabs/StarCoin") as GameObject;
         heart = Resources.Load("Prefabs/Heart") as GameObject;
         snowman = Resources.Load("Prefabs/Snowman") as GameObject;
+        diamond = Resources.Load("Prefabs/Diamond") as GameObject;
     }
-    public void SpawnPlatforms()
+    public void Spawn()
     {
         if (player.transform.position.x + spawnDistance.x >= spawningPoint.x)
         {
-            int whichOne = Random.Range(0,8);
+            int whichOne = 2; //Random.Range(0,8);
             switch(whichOne)
             {
                 case 0:
                     spawningPoint += SpawnPlatformSameAway(spawningPoint);
+
                     break;
                 case 1:
                     spawningPoint += SpawnPlatformLowerAway(spawningPoint);
@@ -52,6 +59,14 @@ public class SpawnManager : MonoBehaviour
         
     }
     private void SpawnCoin(Vector3 pos)
+    {
+
+    }
+    private void SpawnDiamond()
+    {
+
+    }
+    private void SpawnTripleCoins(Vector3 pos)
     {
 
     }
