@@ -49,10 +49,10 @@ public class GameManager : MonoBehaviour
 
     public void IsPlayerDead()
     {
-        gameState.Hearts--;
+        gameState.hearts--;
         gameState.isAlive = false;
         Time.timeScale = 0;
-        if (gameState.Hearts == 0)
+        if (gameState.hearts == 0)
         {
             gameState.state = GameState.State.GameOver;
             Application.Quit();
@@ -62,11 +62,11 @@ public class GameManager : MonoBehaviour
     }
     public void GetCoins()
     {
-        gameState.Coins++;
+        gameState.coins++;
     }
     public void GetHearts()
     {
-        gameState.Hearts++;
+        gameState.hearts++;
     }
     public void SendCameraPosition(Vector3 cameraPos)
     {
@@ -101,8 +101,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            gameState.Hearts = 3;
-            gameState.Coins = 0;
+            gameState.hearts = 3;
+            gameState.coins = 0;
             gameState.state = GameState.State.Restarted;
             gameState.state = GameState.State.OnPlay;
             gameState.isAlive = true;

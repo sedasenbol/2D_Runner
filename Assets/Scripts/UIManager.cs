@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     private TMPro.TextMeshProUGUI coinText;
     private TMPro.TextMeshProUGUI scoreText;
     private TMPro.TextMeshProUGUI countDownText;
+    private TMPro.TextMeshProUGUI heartsText;
     private GameObject playButton;
     private GameObject replayButton;
     private GameObject pauseButton;
@@ -22,7 +23,8 @@ public class UIManager : MonoBehaviour
         playButton = transform.Find("Canvas").Find("Play_Button").gameObject;
         countDownText = transform.Find("Canvas").Find("Count_Down_Text").GetComponent<TMPro.TextMeshProUGUI>();
         coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();      
-        scoreText = transform.Find("Canvas").Find("Score_Text").GetComponent<TMPro.TextMeshProUGUI>();      
+        scoreText = transform.Find("Canvas").Find("Score_Text").GetComponent<TMPro.TextMeshProUGUI>();  
+        heartsText = transform.Find("Canvas").Find("Hearts_Text").GetComponent<TMPro.TextMeshProUGUI>();
         replayButton = transform.Find("Canvas").Find("Replay_Button").gameObject;
         pauseButton = transform.Find("Canvas").Find("Pause_Button").gameObject;
         resumeButton = transform.Find("Canvas").Find("Resume_Button").gameObject;
@@ -30,6 +32,7 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        ShowOrHideButtons();
         if (isCountDownActive)
         {
             timeLeft -= Time.deltaTime;
@@ -52,21 +55,25 @@ public class UIManager : MonoBehaviour
                 countDownText.text = "3";
             }
         }
-        ShowOrHideButtons();
         if (!gameManager.StateOfTheGame.isAlive)
         {
             return;
         }
         ShowCoins();
+        ShowHearts();
         ShowScore();
     }
     private void ShowCoins()
     {
-        coinText.text = (gameManager.StateOfTheGame.Coins).ToString();
+        coinText.text = (gameManager.StateOfTheGame.coins).ToString();
     }
-    public void ShowScore()
+    private void ShowScore()
     {
         scoreText.text = gameManager.StateOfTheGame.score.ToString("0000000");
+    }
+    private void ShowHearts()
+    {
+        heartsText.text = gameManager.StateOfTheGame.hearts.ToString();
     }
     private void ShowOrHideButtons()
     {

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GameState
 {
-    public int Hearts = 3;
-    public int Coins = 0;
+    public int hearts = 3;
+    public int coins = 0;
     public int score = 0;
     public State state = State.OnPlay;
     public Scene scene = Scene.Game;
