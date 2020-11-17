@@ -10,16 +10,18 @@ public class SpawnManager : MonoBehaviour
     private GameObject heart;
     private GameObject snowman;
     private GameObject diamond;
+    private GameObject spawnedPlatform;
     private Vector3 spawningPoint = new Vector3(9.3f,-4.53f,-4f);
     private Vector3 platformLength = new Vector3(5f,0f,0f);
     private Vector3 verticalGap = new Vector3(0f,2f,0f);
     private Vector3 horizontalGap = new Vector3(3f,0f,0f);
     private Vector3 spawnDistance = new Vector3(26.25f,0f,0f);
-    private List<GameObject> platformList;
+    private GameObject[] platformList = new GameObject[10];
     private List<GameObject> heartList;
     private List<GameObject> snowmanList;
     private List<GameObject> starCoinList;
     private List<GameObject> diamondList;
+    private float LowestYOfPlatform = -5;
     private void Start()
     {
         player = GameObject.Find("Player");
@@ -38,7 +40,6 @@ public class SpawnManager : MonoBehaviour
             {
                 case 0:
                     spawningPoint += SpawnPlatformSameAway(spawningPoint);
-
                     break;
                 case 1:
                     spawningPoint += SpawnPlatformLowerAway(spawningPoint);
@@ -54,9 +55,17 @@ public class SpawnManager : MonoBehaviour
                     spawningPoint += SpawnPlatformNext(spawningPoint);
                     break;
             }
-            
+            AddToList(platformList, spawnedPlatform);
         }
-        
+
+    }
+    private void AddToList(GameObject[] list, GameObject gObject)
+    {    
+        for (int i = 1; i < list.Length; i++)
+        {
+            list[i - 1] = list[i];
+        }
+        list[list.Length - 1] = gObject;
     }
     private void SpawnCoin(Vector3 pos)
     {
@@ -80,22 +89,31 @@ public class SpawnManager : MonoBehaviour
     }
     private Vector3 SpawnPlatformHigherAway(Vector3 pos)
     {
-        GameObject platform1 = Instantiate(platform, pos + verticalGap + horizontalGap, Quaternion.identity);
+        spawnedPlatform = Instantiate(platform, pos + verticalGap + horizontalGap, Quaternion.identity);
         return platformLength + verticalGap + horizontalGap;
     }
     private Vector3 SpawnPlatformLowerAway(Vector3 pos)
     {
-        GameObject platform1 = Instantiate(platform, pos - verticalGap + horizontalGap, Quaternion.identity);
+        spawnedPlatform = Instantiate(platform, pos - verticalGap + horizontalGap, Quaternion.identity);
         return platformLength - verticalGap + horizontalGap;
     }
     private Vector3 SpawnPlatformSameAway(Vector3 pos)
     {
-        GameObject platform1 = Instantiate(platform, pos + horizontalGap, Quaternion.identity);
+        spawnedPlatform = Instantiate(platform, pos + horizontalGap, Quaternion.identity);
         return platformLength + horizontalGap;
     }
     private Vector3 SpawnPlatformNext(Vector3 pos)
     {
-        GameObject platform1 = Instantiate(platform, pos, Quaternion.identity);
+        spawnedPlatform = Instantiate(platform, pos, Quaternion.identity);
         return platformLength;
+    }
+    public float LowestYPosition()
+    {
+
+        if (LowestYOfPlatform > platformList[platformList.Length - 1].transform.position.y)
+        {
+            return platformList[platformList.Length - 1].transform.position.y;
+        }
+        return LowestYOfPlatform;
     }
 }
