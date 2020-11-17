@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
     {
         gameState.hearts--;
         gameState.isAlive = false;
-        Time.timeScale = 0;
         if (gameState.hearts == 0)
         {
             gameState.state = GameState.State.GameOver;
@@ -104,6 +103,7 @@ public class GameManager : MonoBehaviour
             gameState.hearts = 3;
             gameState.coins = 0;
             gameState.state = GameState.State.Restarted;
+            gameState = new GameState();
             gameState.state = GameState.State.OnPlay;
             gameState.isAlive = true;
         }
