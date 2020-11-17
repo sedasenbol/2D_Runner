@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
     private readonly float forwardVelocity = 15f;
-    private readonly float jumpVelocity = 25f;
+    private readonly float jumpVelocity = 30f;
     public bool isJumping = false;
     private bool isGrounded = true;
     private Animator anim;

@@ -14,15 +14,17 @@ public class SpawnManager : MonoBehaviour
     private GameObject spawnedPlatform;
     private Vector3 spawningPoint = new Vector3(9.3f,-4.53f,-4f);
     private Vector3 platformLength = new Vector3(5f,0f,0f);
-    private Vector3 verticalGap = new Vector3(0f,2f,0f);
+    private Vector3 verticalGap = new Vector3(0f,3f,0f);
     private Vector3 horizontalGap = new Vector3(3f,0f,0f);
     private Vector3 spawnDistance = new Vector3(26.25f,0f,0f);
+    private Vector3 oldSpawningPoint;
+    private Vector3 pickUpHeight = new Vector3(0f,4f,0f);
     private int queueLength = 10;
     Queue<GameObject> platformQueue = new Queue<GameObject>();
-    private GameObject[] heartArray = new GameObject[10];
-    private GameObject[] snowmanArray = new GameObject[10];
-    private GameObject[] starCoinArray = new GameObject[10];
-    private GameObject[] diamondArray = new GameObject[10];
+    Queue<GameObject> heartQueue = new Queue<GameObject>();
+    Queue<GameObject> snowmanQueue = new Queue<GameObject>();
+    Queue<GameObject> starCoinQueue = new Queue<GameObject>();
+    Queue<GameObject> diamondQueue = new Queue<GameObject>();
     private float LowestYOfPlatform = -5;
     private void Start()
     {
@@ -35,6 +37,10 @@ public class SpawnManager : MonoBehaviour
         for (int i = 0; i<queueLength; i++)
         {
             platformQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Platform_Container").transform.GetChild(i).gameObject);
+            starCoinQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_StarCoin_Container").transform.GetChild(i).gameObject);
+            heartQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Heart_Container").transform.GetChild(i).gameObject);
+            //snowmanQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Snowman_Container").transform.GetChild(i).gameObject);
+            diamondQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Diamond_Container").transform.GetChild(i).gameObject);
         }
         
     }
@@ -42,8 +48,9 @@ public class SpawnManager : MonoBehaviour
     {
         if (player.transform.position.x + spawnDistance.x >= spawningPoint.x)
         {
-            int whichOne =  Random.Range(0,8);
-            switch(whichOne)
+            int whichPlatform =  Random.Range(0,8);
+            oldSpawningPoint = spawningPoint;
+            switch(whichPlatform)
             {
                 case 0:
                     spawningPoint += SpawnPlatformSameAway(spawningPoint);
@@ -64,27 +71,46 @@ public class SpawnManager : MonoBehaviour
             }
             platformQueue.Enqueue(platformQueue.Peek());
             platformQueue.Dequeue();
+            int whichPickup = Random.Range(0, 31);
+            if (whichPickup < 25)
+            {
+                SpawnStarCoin();
+            }
+            else if(whichPickup < 28)
+            {
+                SpawnDiamond();
+            }
+            else
+            {
+                SpawnHeart();
+            }
         }
     }
-    private void SpawnCoin(Vector3 pos)
+    private void SpawnStarCoin()
     {
-
+        starCoinQueue.Peek().transform.position = (oldSpawningPoint + spawningPoint) / 2 + pickUpHeight - platformLength;
+        starCoinQueue.Enqueue(starCoinQueue.Peek());
+        starCoinQueue.Dequeue();
     }
     private void SpawnDiamond()
     {
-
+        diamondQueue.Peek().transform.position = (oldSpawningPoint + spawningPoint) / 2 + pickUpHeight - platformLength;
+        diamondQueue.Enqueue(diamondQueue.Peek());
+        diamondQueue.Dequeue();
     }
-    private void SpawnTripleCoins(Vector3 pos)
+    private void SpawnTripleCoins()
     {
 
     }
-    private void SpawnSnowman(Vector3 pos)
+    private void SpawnSnowman()
     {
 
     }
-    private void SpawnHeart(Vector3 pos)
+    private void SpawnHeart()
     {
-
+        heartQueue.Peek().transform.position = (oldSpawningPoint + spawningPoint) / 2 + pickUpHeight - platformLength;
+        heartQueue.Enqueue(diamondQueue.Peek());
+        heartQueue.Dequeue();
     }
     private Vector3 SpawnPlatformHigherAway(Vector3 pos)
     {
