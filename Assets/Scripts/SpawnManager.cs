@@ -109,10 +109,12 @@ public class SpawnManager : MonoBehaviour
     }
     public float LowestYPosition()
     {
-
-        if (LowestYOfPlatform > platformList[platformList.Length - 1].transform.position.y)
+        if(platformList[platformList.Length - 1] != null)
         {
-            return platformList[platformList.Length - 1].transform.position.y;
+            if (LowestYOfPlatform > platformList[platformList.Length - 1].transform.position.y)
+            {
+                return platformList[platformList.Length - 1].transform.position.y;
+            }
         }
         return LowestYOfPlatform;
     }
