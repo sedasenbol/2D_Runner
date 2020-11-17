@@ -5,8 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private readonly float forwardVelocity = 10f;
-    private bool isJumping = false;
+    private readonly float velocity = 15f;
+    public bool isJumping = false;
     private bool isGrounded = true;
     private Animator anim;
     private GameManager gameManager;
@@ -22,9 +22,8 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Space) && isGrounded && gameManager.StateOfTheGame.isAlive && !isJumping)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && gameManager.StateOfTheGame.isAlive && !isJumping)
         {
-            isGrounded = false;
             isJumping = true;
         }
 
@@ -36,47 +35,26 @@ public class Player : MonoBehaviour
         {
             return;
         }
-        if (isJumping)
+        if (isJumping && isGrounded)
         {
-            rb.velocity = new Vector2(0, 0);
-            StartCoroutine(Jump());
+            isJumping = false;
             isGrounded = false;
-            //rb.AddForce(new Vector2(0, rb.velocity.x*4));
-            //isJumping = false;
+            //StartCoroutine(Jump());
+            rb.velocity = new Vector2(rb.velocity.x / 5, 25);
             anim.Play("Jump");
         }
-        else if (isGrounded)
+        if (isGrounded)
         {
             MoveForward();
         }
+        
         gameManager.IncreaseScore();
         ZeroVelocityCheck();
     }
 
     private void MoveForward()
     {
-        rb.velocity = new Vector2(forwardVelocity, rb.velocity.y);
-    }
-    private IEnumerator Jump()
-    {
-        float startingYPos = transform.position.y;
-        while (!isGrounded && isJumping)
-        {
-            for (int i = 0; i<30; i++)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, 5);
-                //rb.AddForce(new Vector2(0, -20));
-                yield return new WaitForEndOfFrame();
-            }
-            rb.velocity = new Vector2(0,0);
-            for (int i=1; i<30; i++)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, -5);
-                //rb.AddForce(new Vector2(0, -20));
-                yield return new WaitForEndOfFrame();
-            }
-        }    
-        isJumping = false;   
+        rb.velocity = new Vector2(velocity, rb.velocity.y);
     }
     private void OnCollisionStay2D(Collision2D collision)
     {

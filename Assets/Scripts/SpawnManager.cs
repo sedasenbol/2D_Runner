@@ -12,8 +12,8 @@ public class SpawnManager : MonoBehaviour
     private GameObject diamond;
     private Vector3 spawningPoint = new Vector3(9.3f,-4.53f,-4f);
     private Vector3 platformLength = new Vector3(5f,0f,0f);
-    private Vector3 verticalGap = new Vector3(2f,0f,0f);
-    private Vector3 horizontalGap = new Vector3(0f,2f,0f);
+    private Vector3 verticalGap = new Vector3(0f,2f,0f);
+    private Vector3 horizontalGap = new Vector3(3f,0f,0f);
     private Vector3 spawnDistance = new Vector3(26.25f,0f,0f);
     private List<GameObject> platformList;
     private List<GameObject> heartList;
@@ -33,7 +33,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (player.transform.position.x + spawnDistance.x >= spawningPoint.x)
         {
-            int whichOne = 2; //Random.Range(0,8);
+            int whichOne =  Random.Range(0,8);
             switch(whichOne)
             {
                 case 0:
@@ -85,13 +85,13 @@ public class SpawnManager : MonoBehaviour
     }
     private Vector3 SpawnPlatformLowerAway(Vector3 pos)
     {
-        GameObject platform1 = Instantiate(platform, pos + verticalGap - horizontalGap, Quaternion.identity);
-        return platformLength + verticalGap - horizontalGap;
+        GameObject platform1 = Instantiate(platform, pos - verticalGap + horizontalGap, Quaternion.identity);
+        return platformLength - verticalGap + horizontalGap;
     }
     private Vector3 SpawnPlatformSameAway(Vector3 pos)
     {
-        GameObject platform1 = Instantiate(platform, pos + verticalGap, Quaternion.identity);
-        return platformLength + verticalGap;
+        GameObject platform1 = Instantiate(platform, pos + horizontalGap, Quaternion.identity);
+        return platformLength + horizontalGap;
     }
     private Vector3 SpawnPlatformNext(Vector3 pos)
     {
