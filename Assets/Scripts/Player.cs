@@ -5,20 +5,21 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private readonly float velocity = 15f;
+    private readonly float forwardVelocity = 15f;
+    private readonly float jumpVelocity = 25f;
     public bool isJumping = false;
     private bool isGrounded = true;
     private Animator anim;
     private GameManager gameManager;
-    private Vector3 prePosition;
+    private Vector3 startPos = new Vector3(-17f, -4f, -4f);
+    private bool justStarted = true;
     private void Start()
     {
-        transform.position = new Vector3(-17,-4,-4);
+        transform.position = startPos;
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         anim.Play("Run");
         gameManager = FindObjectOfType<GameManager>();
-        prePosition = transform.position;
     }
     private void Update()
     {
@@ -37,35 +38,39 @@ public class Player : MonoBehaviour
         }
         if (isJumping && isGrounded)
         {
-            isJumping = false;
-            isGrounded = false;
-            //StartCoroutine(Jump());
-            rb.velocity = new Vector2(rb.velocity.x / 5, 25);
-            anim.Play("Jump");
+            Jump();
         }
         if (isGrounded)
         {
             MoveForward();
         }
-        
         gameManager.IncreaseScore();
-        ZeroVelocityCheck();
     }
 
     private void MoveForward()
     {
-        rb.velocity = new Vector2(velocity, rb.velocity.y);
+        rb.velocity = new Vector2(forwardVelocity, rb.velocity.y);
+    }
+    private void Jump()
+    {
+        isJumping = false;
+        isGrounded = false;
+        rb.velocity = new Vector2(rb.velocity.x / 5, jumpVelocity);
+        anim.Play("Jump");
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
-        /*if (collision.gameObject.layer == 9 && gameManager.StateOfTheGame.isAlive && ZeroVelocityCheck())
+        if (collision.gameObject.layer == 9)
         {
-            anim.Play("Death");
-            gameManager.IsPlayerDead();
-        }
-        else*/ if (collision.gameObject.layer == 9)
-        {
-            isGrounded = true;
+            if (ZeroVelocityCheck() && !justStarted)
+            {
+                collision.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            }
+            else
+            {
+                justStarted = false;
+                isGrounded = true;
+            }
         }
     }
     private void OnCollisionExit2D(Collision2D collision)
@@ -82,7 +87,7 @@ public class Player : MonoBehaviour
             gameManager.IsPlayerDead();
             anim.Play("Death");
         }
-        if(collision.gameObject.layer == 9 && !ZeroVelocityCheck())
+        else if(collision.gameObject.layer == 9 && !ZeroVelocityCheck())
         {
             isGrounded = true;
         }
@@ -97,26 +102,19 @@ public class Player : MonoBehaviour
         {
             gameManager.GetHearts();
         }
-    }
+    }    
     private bool ZeroVelocityCheck()
     {
         if (rb.velocity != new Vector2(0,0))
         {
-            prePosition = transform.position;
-            return false;
+        return false;
         }
-        else if (!isJumping && !isGrounded)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return true;
     }
     public void StartAgain()
     {
-        transform.position = new Vector3(-7, -3, -4);
+        justStarted = true;
+        transform.position = startPos;
         anim.Play("Run");
     }
 }
