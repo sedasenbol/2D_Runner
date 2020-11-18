@@ -177,6 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1027783ede7ae054e8dd5215cb675423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPlayerFlying: 0
 --- !u!1 &37253811
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,7 +702,7 @@ GameObject:
   m_Component:
   - component: {fileID: 214536935}
   - component: {fileID: 214536936}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UI_Manager
   m_TagString: UI
   m_Icon: {fileID: 0}

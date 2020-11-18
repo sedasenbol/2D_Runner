@@ -5,6 +5,7 @@ using System.Linq;
 
 public class SpawnManager : MonoBehaviour
 {
+    public bool isPlayerFlying = false;
     private GameObject player;
     private GameObject platform;
     private GameObject starCoin;
@@ -53,6 +54,10 @@ public class SpawnManager : MonoBehaviour
         {
             bool spawnedSnowman = false;
             int whichPlatform =  Random.Range(0,8);
+            if(isPlayerFlying)
+            {
+                whichPlatform = 7;
+            }
             oldSpawningPoint = spawningPoint;
             switch(whichPlatform)
             {
@@ -156,8 +161,8 @@ public class SpawnManager : MonoBehaviour
     }
     public float LowestYPosition()
     {
-        LowestYOfPlatform = platformQueue.ElementAt(0).transform.position.y;
-        for (int i = 1; i < queueLength; i++)
+        LowestYOfPlatform = platformQueue.ElementAt(queueLength -1).transform.position.y;
+        for (int i = 0; i < queueLength - 1; i++)
         {
             if (platformQueue.ElementAt(i).transform.position.y < LowestYOfPlatform)
             {
@@ -165,6 +170,18 @@ public class SpawnManager : MonoBehaviour
             }
         }
         return LowestYOfPlatform;
+    }
+    public float HighestYPosition()
+    {
+        float HighestYOfPlatform = platformQueue.ElementAt(queueLength - 1).transform.position.y;;
+        for (int i = 0; i < queueLength -1; i++)
+        {
+            if (platformQueue.ElementAt(i).transform.position.y > HighestYOfPlatform)
+            {
+                HighestYOfPlatform = platformQueue.ElementAt(i).transform.position.y;
+            }
+        }
+        return HighestYOfPlatform;
     }
     public void SpawnFromScratch()
     {
