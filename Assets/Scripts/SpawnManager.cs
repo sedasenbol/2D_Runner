@@ -13,12 +13,12 @@ public class SpawnManager : MonoBehaviour
     private GameObject diamond;
     private GameObject spawnedPlatform;
     private Vector3 spawningPoint = new Vector3(9.3f,-4.53f,-4f);
-    private Vector3 platformLength = new Vector3(5f,0f,0f);
-    private Vector3 verticalGap = new Vector3(0f,3f,0f);
-    private Vector3 horizontalGap = new Vector3(3f,0f,0f);
-    private Vector3 spawnDistance = new Vector3(26.25f,0f,0f);
+    private readonly Vector3 platformLength = new Vector3(5f,0f,0f);
+    private readonly Vector3 verticalGap = new Vector3(0f,3f,0f);
+    private readonly Vector3 horizontalGap = new Vector3(3f,0f,0f);
+    private readonly Vector3 spawnDistance = new Vector3(26.25f,0f,0f);
+    private readonly Vector3 pickUpHeight = new Vector3(0f,4f,0f);
     private Vector3 oldSpawningPoint;
-    private Vector3 pickUpHeight = new Vector3(0f,4f,0f);
     private int queueLength = 10;
     Queue<GameObject> platformQueue = new Queue<GameObject>();
     Queue<GameObject> heartQueue = new Queue<GameObject>();
@@ -34,15 +34,18 @@ public class SpawnManager : MonoBehaviour
         heart = Resources.Load("Prefabs/Heart") as GameObject;
         snowman = Resources.Load("Prefabs/Snowman") as GameObject;
         diamond = Resources.Load("Prefabs/Diamond") as GameObject;
-        for (int i = 0; i<queueLength; i++)
+        SpawnInitialization();
+    }
+    private void SpawnInitialization()
+    {
+        for (int i = 0; i < queueLength; i++)
         {
             platformQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Platform_Container").transform.GetChild(i).gameObject);
             starCoinQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_StarCoin_Container").transform.GetChild(i).gameObject);
             heartQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Heart_Container").transform.GetChild(i).gameObject);
-            //snowmanQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Snowman_Container").transform.GetChild(i).gameObject);
+            snowmanQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Snowman_Container").transform.GetChild(i).gameObject);
             diamondQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Diamond_Container").transform.GetChild(i).gameObject);
         }
-        
     }
     public void Spawn()
     {
@@ -71,12 +74,12 @@ public class SpawnManager : MonoBehaviour
             }
             platformQueue.Enqueue(platformQueue.Peek());
             platformQueue.Dequeue();
-            int whichPickup = Random.Range(0, 31);
-            if (whichPickup < 25)
+            int whichPickup = Random.Range(0, 100);
+            if (whichPickup < 95)
             {
                 SpawnStarCoin();
             }
-            else if(whichPickup < 28)
+            else if(whichPickup < 99)
             {
                 SpawnDiamond();
             }
@@ -98,13 +101,11 @@ public class SpawnManager : MonoBehaviour
         diamondQueue.Enqueue(diamondQueue.Peek());
         diamondQueue.Dequeue();
     }
-    private void SpawnTripleCoins()
-    {
-
-    }
     private void SpawnSnowman()
     {
-
+        snowmanQueue.Peek().transform.position = (oldSpawningPoint + spawningPoint) / 2 + pickUpHeight - platformLength;
+        snowmanQueue.Enqueue(diamondQueue.Peek());
+        snowmanQueue.Dequeue();
     }
     private void SpawnHeart()
     {
@@ -139,5 +140,13 @@ public class SpawnManager : MonoBehaviour
             return platformQueue.Peek().transform.position.y;
         }
         return LowestYOfPlatform;
+    }
+    public void SpawnFromScratch()
+    {
+        for (int i=0; i < queueLength; i++)
+        {
+            platformQueue.ElementAt(i).transform.position = new Vector3(-60f, -3f, 0f);
+        }
+        spawningPoint = new Vector3(9.3f, -4.53f, -4f);
     }
 }

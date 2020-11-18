@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     private Player player;
     private UIManager uIManager;
+    private SpawnManager spawnManager;
     private ConstantDistance[] constantDist;
     private GameState gameState = new GameState();
     public GameState StateOfTheGame => gameState;
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
+        spawnManager = GetComponent<SpawnManager>();
         player = GameObject.Find("Player").GetComponent<Player>();
         constantDist = FindObjectsOfType<ConstantDistance>();
     }
@@ -95,6 +97,7 @@ public class GameManager : MonoBehaviour
         if (gameState.state == GameState.State.IsDead)
         {
             gameState.state = GameState.State.Replaying;
+            spawnManager.SpawnFromScratch();
             gameState.state = GameState.State.OnPlay;
             gameState.isAlive = true;
         }
@@ -104,6 +107,7 @@ public class GameManager : MonoBehaviour
             gameState.coins = 0;
             gameState.state = GameState.State.Restarted;
             gameState = new GameState();
+            spawnManager.SpawnFromScratch();
             gameState.state = GameState.State.OnPlay;
             gameState.isAlive = true;
         }

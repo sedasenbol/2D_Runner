@@ -62,15 +62,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.layer == 9)
         {
-            if (ZeroVelocityCheck() && !justStarted)
-            {
-                collision.gameObject.GetComponent<BoxCollider2D>().enabled = false;
-            }
-            else
-            {
-                justStarted = false;
-                isGrounded = true;
-            }
+            isGrounded = true;
         }
     }
     private void OnCollisionExit2D(Collision2D collision)
@@ -107,7 +99,7 @@ public class Player : MonoBehaviour
     {
         if (rb.velocity != new Vector2(0,0))
         {
-        return false;
+            return false;
         }
         return true;
     }
