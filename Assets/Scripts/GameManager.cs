@@ -31,7 +31,10 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        GetComponent<SpawnManager>().Spawn();
+        if (spawnManager)
+        {
+            spawnManager.Spawn();
+        }
     }
     public void StartCountDown()
     {

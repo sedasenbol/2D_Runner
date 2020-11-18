@@ -71,7 +71,7 @@ public class SpawnManager : MonoBehaviour
                 case 6:
                 case 7:
                     int randomSnowman = Random.Range(0, 8);
-                    if (randomSnowman < 7)
+                    if (randomSnowman == 7)
                     {
                         spawningPoint += SpawnPlatformNext(spawningPoint);
                         platformQueue.Enqueue(platformQueue.Peek());
@@ -156,9 +156,13 @@ public class SpawnManager : MonoBehaviour
     }
     public float LowestYPosition()
     {
-        if (LowestYOfPlatform > platformQueue.Peek().transform.position.y)
+        LowestYOfPlatform = platformQueue.ElementAt(0).transform.position.y;
+        for (int i = 1; i < queueLength; i++)
         {
-            LowestYOfPlatform = platformQueue.Peek().transform.position.y;
+            if (platformQueue.ElementAt(i).transform.position.y < LowestYOfPlatform)
+            {
+                LowestYOfPlatform = platformQueue.ElementAt(i).transform.position.y;
+            }
         }
         return LowestYOfPlatform;
     }
@@ -174,6 +178,5 @@ public class SpawnManager : MonoBehaviour
         }
         spawningPoint = new Vector3(9.3f, -4.53f, -4f);
         LowestYOfPlatform = -5;
-
-}
+    }
 }
