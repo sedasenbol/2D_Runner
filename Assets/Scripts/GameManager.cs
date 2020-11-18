@@ -103,8 +103,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            gameState.hearts = 3;
-            gameState.coins = 0;
             gameState.state = GameState.State.Restarted;
             gameState = new GameState();
             spawnManager.SpawnFromScratch();

@@ -51,6 +51,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (player.transform.position.x + spawnDistance.x >= spawningPoint.x)
         {
+            bool spawnedSnowman = false;
             int whichPlatform =  Random.Range(0,8);
             oldSpawningPoint = spawningPoint;
             switch(whichPlatform)
@@ -69,23 +70,43 @@ public class SpawnManager : MonoBehaviour
                 case 5:
                 case 6:
                 case 7:
+                    int randomSnowman = Random.Range(0, 8);
+                    if (randomSnowman < 7)
+                    {
+                        spawningPoint += SpawnPlatformNext(spawningPoint);
+                        platformQueue.Enqueue(platformQueue.Peek());
+                        platformQueue.Dequeue();
+                        SpawnSnowman();
+                        spawnedSnowman = true;
+                        spawningPoint += SpawnPlatformNext(spawningPoint);
+                        platformQueue.Enqueue(platformQueue.Peek());
+                        platformQueue.Dequeue();
+                    }
+                    platformQueue.Peek();
                     spawningPoint += SpawnPlatformNext(spawningPoint);
                     break;
             }
             platformQueue.Enqueue(platformQueue.Peek());
             platformQueue.Dequeue();
-            int whichPickup = Random.Range(0, 100);
-            if (whichPickup < 95)
+            if (!spawnedSnowman)
             {
-                SpawnStarCoin();
-            }
-            else if(whichPickup < 99)
-            {
-                SpawnDiamond();
+                int whichPickup = Random.Range(0, 100);
+                if (whichPickup < 95)
+                {
+                    SpawnStarCoin();
+                }
+                else if (whichPickup < 99)
+                {
+                    SpawnDiamond();
+                }
+                else
+                {
+                    SpawnHeart();
+                }
             }
             else
             {
-                SpawnHeart();
+                spawnedSnowman = false;
             }
         }
     }
@@ -103,14 +124,14 @@ public class SpawnManager : MonoBehaviour
     }
     private void SpawnSnowman()
     {
-        snowmanQueue.Peek().transform.position = (oldSpawningPoint + spawningPoint) / 2 + pickUpHeight - platformLength;
-        snowmanQueue.Enqueue(diamondQueue.Peek());
+        snowmanQueue.Peek().transform.position = (oldSpawningPoint + spawningPoint) / 2 - 1 * platformLength + new Vector3(0,1.4f,0);
+        snowmanQueue.Enqueue(snowmanQueue.Peek());
         snowmanQueue.Dequeue();
     }
     private void SpawnHeart()
     {
         heartQueue.Peek().transform.position = (oldSpawningPoint + spawningPoint) / 2 + pickUpHeight - platformLength;
-        heartQueue.Enqueue(diamondQueue.Peek());
+        heartQueue.Enqueue(heartQueue.Peek());
         heartQueue.Dequeue();
     }
     private Vector3 SpawnPlatformHigherAway(Vector3 pos)
@@ -137,7 +158,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (LowestYOfPlatform > platformQueue.Peek().transform.position.y)
         {
-            return platformQueue.Peek().transform.position.y;
+            LowestYOfPlatform = platformQueue.Peek().transform.position.y;
         }
         return LowestYOfPlatform;
     }
@@ -146,7 +167,13 @@ public class SpawnManager : MonoBehaviour
         for (int i=0; i < queueLength; i++)
         {
             platformQueue.ElementAt(i).transform.position = new Vector3(-60f, -3f, 0f);
+            heartQueue.ElementAt(i).transform.position = new Vector3(-60f, -3f, 0f);
+            diamondQueue.ElementAt(i).transform.position = new Vector3(-60f, -3f, 0f);
+            starCoinQueue.ElementAt(i).transform.position = new Vector3(-60f, -3f, 0f);
+            snowmanQueue.ElementAt(i).transform.position = new Vector3(-60f, -3f, 0f);
         }
         spawningPoint = new Vector3(9.3f, -4.53f, -4f);
-    }
+        LowestYOfPlatform = -5;
+
+}
 }
