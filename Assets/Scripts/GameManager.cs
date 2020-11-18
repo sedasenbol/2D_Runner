@@ -87,10 +87,14 @@ public class GameManager : MonoBehaviour
             gameState.state = GameState.State.OnPlay;
             gameState.isAlive = true;
         }
-        else 
+        else if (gameState.state == GameState.State.OnPlay)
         {
             gameState.isAlive = false;
             gameState.state = GameState.State.Paused; 
+        }
+        else 
+        {
+            throw new System.Exception("Pause button is misplaced.");
         }
         Time.timeScale = Mathf.Abs(Time.timeScale-1);
     }
@@ -100,18 +104,22 @@ public class GameManager : MonoBehaviour
         if (gameState.state == GameState.State.IsDead)
         {
             gameState.state = GameState.State.Replaying;
-            spawnManager.SpawnFromScratch();
-            gameState.state = GameState.State.OnPlay;
-            gameState.isAlive = true;
+            gameState.score = 0;
+            gameState.coins = 0;
+
         }
-        else
+        else if (gameState.state == GameState.State.GameOver)
         {
             gameState.state = GameState.State.Restarted;
             gameState = new GameState();
-            spawnManager.SpawnFromScratch();
-            gameState.state = GameState.State.OnPlay;
-            gameState.isAlive = true;
         }
+        else
+        {
+            throw new System.Exception("Play/replay button is misplaced.");
+        }
+        spawnManager.SpawnFromScratch();
+        gameState.state = GameState.State.OnPlay;
+        gameState.isAlive = true;
         Time.timeScale = 1;
     }
 }
