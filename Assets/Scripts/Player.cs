@@ -31,7 +31,6 @@ public class Player : MonoBehaviour
         }
 
     }
-
     private void FixedUpdate()
     {
         if (!gameManager.StateOfTheGame.isAlive)
@@ -47,8 +46,8 @@ public class Player : MonoBehaviour
             MoveForward();
         }
         gameManager.IncreaseScore();
+        Debug.Log(rb.velocity);
     }
-
     private void MoveForward()
     {
         rb.velocity = new Vector2(FORWARD_VELOCITY, rb.velocity.y);
@@ -60,23 +59,26 @@ public class Player : MonoBehaviour
         rb.velocity = new Vector2(FORWARD_VELOCITY / 5, JUMP_VELOCITY);
         anim.Play("Jump");
     }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.isAlive)
+        if (new List<int> { 8, 10 }.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.isAlive)
         {
             gameManager.IsPlayerDead();
             anim.Play("Death");
         }
-        else if(collision.gameObject.layer == 9 && !ZeroVelocityCheck())
+        else if (collision.gameObject.layer == 9 && ZeroVelocityCheck())
         {
             isGrounded = true;
-            anim.Play("Run");
         }
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 9)
+        if (collision.gameObject.layer == 9 && ZeroVelocityCheck())
+        {
+            gameManager.IsPlayerDead();
+            anim.Play("Death");
+        }
+        else if (collision.gameObject.layer == 9)
         {
             isGrounded = true;
         }
@@ -102,35 +104,34 @@ public class Player : MonoBehaviour
         {
             FlyingPowerUp();
         }
-    }    
-    
+    }
     private void FlyingPowerUp()
     {
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.isKinematic = true;
         rb.position = new Vector3(transform.position.x, spawnManager.playerFlyingHeight, transform.position.z);
         rb.gravityScale = 0;
-        anim.Play("Jump");
+        anim.enabled = false;
         spawnManager.isPlayerFlying = true;
         rb.rotation = 30f;
         StartCoroutine(HitTheGround());
     }
-
     IEnumerator HitTheGround()
     {
         yield return new WaitForSeconds(FLYING_TIME);
         rb.gravityScale = 1;
         spawnManager.isPlayerFlying = false;
         rb.rotation = 0f;
+        anim.enabled = true;
         rb.isKinematic = false;
     }
     private bool ZeroVelocityCheck()
     {
         if (rb.velocity.sqrMagnitude <= 1E-3f)
         {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
     public void StartAgain()
     {

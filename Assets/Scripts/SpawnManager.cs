@@ -15,8 +15,7 @@ public class SpawnManager : MonoBehaviour
     private readonly Vector3 spawnDistance = new Vector3(26.25f,0f,0f);
     private readonly Vector3 pickUpHeight = new Vector3(0f,4f,0f);
     private Vector3 oldSpawningPoint;
-    private int queueLength = 10;
-    GameObject[] platformArray = new GameObject[10];
+    private const int QUEUE_LENGTH = 10;
     Queue<GameObject> platformQueue = new Queue<GameObject>();
     Queue<GameObject> heartQueue = new Queue<GameObject>();
     Queue<GameObject> snowmanQueue = new Queue<GameObject>();
@@ -36,7 +35,7 @@ public class SpawnManager : MonoBehaviour
         var snowmanContainer = GameObject.Find("Spawned_Snowman_Container").transform;
         var diamondContainer = GameObject.Find("Spawned_Diamond_Container").transform;
         //5 times.
-        for (int i = 0; i < queueLength; i++)
+        for (int i = 0; i < QUEUE_LENGTH; i++)
         {
             platformQueue.Enqueue(platformContainer.GetChild(i).gameObject);
             starCoinQueue.Enqueue(starCoinContainer.GetChild(i).gameObject);
@@ -171,7 +170,7 @@ public class SpawnManager : MonoBehaviour
     }
     public void SpawnFromScratch()
     {
-        for (int i=0; i < queueLength; i++)
+        for (int i=0; i < QUEUE_LENGTH; i++)
         {
             platformQueue.ElementAt(i).transform.position = new Vector3(-60f, -3f, 0f);
             heartQueue.ElementAt(i).transform.position = new Vector3(-60f, -3f, 0f);
