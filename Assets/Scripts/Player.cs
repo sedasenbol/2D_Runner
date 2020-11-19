@@ -5,14 +5,14 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private readonly float forwardVelocity = 15f;
-    private readonly float jumpVelocity = 30f;
+    private const float FORWARD_VELOCITY = 15f;
+    private const float JUMP_VELOCITY = 30f;
     public bool isJumping = false;
     private bool isGrounded = true;
     private Animator anim;
     private GameManager gameManager;
-    private Vector3 startPos = new Vector3(-17f, -4f, -4f);
-    private bool justStarted = true;
+    private readonly Vector3 startPos = new Vector3(-17f, -4f, -4f);
+    private const int FLYING_TIME = 5;
     private SpawnManager spawnManager;
     private void Start()
     {
@@ -51,14 +51,28 @@ public class Player : MonoBehaviour
 
     private void MoveForward()
     {
-        rb.velocity = new Vector2(forwardVelocity, rb.velocity.y);
+        rb.velocity = new Vector2(FORWARD_VELOCITY, rb.velocity.y);
     }
     private void Jump()
     {
         isJumping = false;
         isGrounded = false;
-        rb.velocity = new Vector2(rb.velocity.x / 5, jumpVelocity);
+        rb.velocity = new Vector2(FORWARD_VELOCITY / 5, JUMP_VELOCITY);
         anim.Play("Jump");
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.isAlive)
+        {
+            gameManager.IsPlayerDead();
+            anim.Play("Death");
+        }
+        else if(collision.gameObject.layer == 9 && !ZeroVelocityCheck())
+        {
+            isGrounded = true;
+            anim.Play("Run");
+        }
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
@@ -72,19 +86,6 @@ public class Player : MonoBehaviour
         if (collision.gameObject.layer == 9)
         {
             isGrounded = false;
-        }
-    }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (new List<int> {8, 10}.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.isAlive)
-        {
-            gameManager.IsPlayerDead();
-            anim.Play("Death");
-        }
-        else if(collision.gameObject.layer == 9 && !ZeroVelocityCheck())
-        {
-            isGrounded = true;
-            anim.Play("Run");
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -102,25 +103,30 @@ public class Player : MonoBehaviour
             FlyingPowerUp();
         }
     }    
-    public void FlyingPowerUp()
+    
+    private void FlyingPowerUp()
     {
-        float flyingHeight = spawnManager.HighestYPosition();
-        transform.position = new Vector3(transform.position.x, flyingHeight + 10f, transform.position.z);
-        GetComponent<Rigidbody2D>().gravityScale = 0;
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rb.isKinematic = true;
+        rb.position = new Vector3(transform.position.x, spawnManager.playerFlyingHeight, transform.position.z);
+        rb.gravityScale = 0;
         anim.Play("Jump");
-        int flyingTime = 5;
         spawnManager.isPlayerFlying = true;
-        IEnumerator FlyBeforeHittingTheGround()
-        {
-            yield return new WaitForSeconds(flyingTime);
-            GetComponent<Rigidbody2D>().gravityScale = 1;
-            spawnManager.isPlayerFlying = false;
-        }
-        StartCoroutine(FlyBeforeHittingTheGround());
+        rb.rotation = 30f;
+        StartCoroutine(HitTheGround());
+    }
+
+    IEnumerator HitTheGround()
+    {
+        yield return new WaitForSeconds(FLYING_TIME);
+        rb.gravityScale = 1;
+        spawnManager.isPlayerFlying = false;
+        rb.rotation = 0f;
+        rb.isKinematic = false;
     }
     private bool ZeroVelocityCheck()
     {
-        if (rb.velocity != new Vector2(0,0))
+        if (rb.velocity.sqrMagnitude <= 1E-3f)
         {
             return false;
         }
@@ -128,7 +134,6 @@ public class Player : MonoBehaviour
     }
     public void StartAgain()
     {
-        justStarted = true;
         transform.position = startPos;
         anim.Play("Run");
     }

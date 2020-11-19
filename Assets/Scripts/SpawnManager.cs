@@ -6,13 +6,8 @@ using System.Linq;
 public class SpawnManager : MonoBehaviour
 {
     public bool isPlayerFlying = false;
+    public float playerFlyingHeight = 100f;
     private GameObject player;
-    private GameObject platform;
-    private GameObject starCoin;
-    private GameObject heart;
-    private GameObject snowman;
-    private GameObject diamond;
-    private GameObject spawnedPlatform;
     private Vector3 spawningPoint = new Vector3(9.3f,-4.53f,-4f);
     private readonly Vector3 platformLength = new Vector3(5f,0f,0f);
     private readonly Vector3 verticalGap = new Vector3(0f,3f,0f);
@@ -21,31 +16,33 @@ public class SpawnManager : MonoBehaviour
     private readonly Vector3 pickUpHeight = new Vector3(0f,4f,0f);
     private Vector3 oldSpawningPoint;
     private int queueLength = 10;
+    GameObject[] platformArray = new GameObject[10];
     Queue<GameObject> platformQueue = new Queue<GameObject>();
     Queue<GameObject> heartQueue = new Queue<GameObject>();
     Queue<GameObject> snowmanQueue = new Queue<GameObject>();
     Queue<GameObject> starCoinQueue = new Queue<GameObject>();
     Queue<GameObject> diamondQueue = new Queue<GameObject>();
-    private float LowestYOfPlatform = -5;
+    public float LowestYOfPlatform = -5;
     private void Start()
     {
         player = GameObject.Find("Player");
-        platform = Resources.Load("Prefabs/Platform") as GameObject;
-        starCoin = Resources.Load("Prefabs/StarCoin") as GameObject;
-        heart = Resources.Load("Prefabs/Heart") as GameObject;
-        snowman = Resources.Load("Prefabs/Snowman") as GameObject;
-        diamond = Resources.Load("Prefabs/Diamond") as GameObject;
         SpawnInitialization();
     }
     private void SpawnInitialization()
     {
+        var platformContainer = GameObject.Find("Spawned_Platform_Container").transform;
+        var starCoinContainer = GameObject.Find("Spawned_StarCoin_Container").transform;
+        var heartContainer = GameObject.Find("Spawned_Heart_Container").transform;
+        var snowmanContainer = GameObject.Find("Spawned_Snowman_Container").transform;
+        var diamondContainer = GameObject.Find("Spawned_Diamond_Container").transform;
+        //5 times.
         for (int i = 0; i < queueLength; i++)
         {
-            platformQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Platform_Container").transform.GetChild(i).gameObject);
-            starCoinQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_StarCoin_Container").transform.GetChild(i).gameObject);
-            heartQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Heart_Container").transform.GetChild(i).gameObject);
-            snowmanQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Snowman_Container").transform.GetChild(i).gameObject);
-            diamondQueue.Enqueue(GameObject.Find("Stage").transform.Find("Spawned_Diamond_Container").transform.GetChild(i).gameObject);
+            platformQueue.Enqueue(platformContainer.GetChild(i).gameObject);
+            starCoinQueue.Enqueue(starCoinContainer.GetChild(i).gameObject);
+            heartQueue.Enqueue(heartContainer.GetChild(i).gameObject);
+            snowmanQueue.Enqueue(snowmanContainer.transform.GetChild(i).gameObject);
+            diamondQueue.Enqueue(diamondContainer.GetChild(i).gameObject);
         }
     }
     public void Spawn()
@@ -76,7 +73,7 @@ public class SpawnManager : MonoBehaviour
                 case 6:
                 case 7:
                     int randomSnowman = Random.Range(0, 8);
-                    if (randomSnowman == 7)
+                    if (randomSnowman == 7 && !isPlayerFlying)
                     {
                         spawningPoint += SpawnPlatformNext(spawningPoint);
                         platformQueue.Enqueue(platformQueue.Peek());
@@ -92,13 +89,24 @@ public class SpawnManager : MonoBehaviour
                     break;
             }
             platformQueue.Enqueue(platformQueue.Peek());
+            if (platformQueue.Peek().transform.position.y < LowestYOfPlatform)
+            {
+                LowestYOfPlatform = platformQueue.Peek().transform.position.y;
+            }
             platformQueue.Dequeue();
             if (!spawnedSnowman)
             {
                 int whichPickup = Random.Range(0, 100);
                 if (whichPickup < 95)
                 {
-                    SpawnStarCoin();
+                    if (isPlayerFlying)
+                    {
+                        SpawnStarCoinHigh();
+                    }
+                    else
+                    {
+                        SpawnStarCoin();
+                    }
                 }
                 else if (whichPickup < 99)
                 {
@@ -109,15 +117,17 @@ public class SpawnManager : MonoBehaviour
                     SpawnHeart();
                 }
             }
-            else
-            {
-                spawnedSnowman = false;
-            }
         }
     }
     private void SpawnStarCoin()
     {
         starCoinQueue.Peek().transform.position = (oldSpawningPoint + spawningPoint) / 2 + pickUpHeight - platformLength;
+        starCoinQueue.Enqueue(starCoinQueue.Peek());
+        starCoinQueue.Dequeue();
+    }
+    private void SpawnStarCoinHigh()
+    {
+        starCoinQueue.Peek().transform.position = new Vector3(player.transform.position.x + 5, playerFlyingHeight + pickUpHeight.y / 3, player.transform.position.z);
         starCoinQueue.Enqueue(starCoinQueue.Peek());
         starCoinQueue.Dequeue();
     }
@@ -158,30 +168,6 @@ public class SpawnManager : MonoBehaviour
     {
         platformQueue.Peek().transform.position = pos;
         return platformLength;
-    }
-    public float LowestYPosition()
-    {
-        LowestYOfPlatform = platformQueue.ElementAt(queueLength -1).transform.position.y;
-        for (int i = 0; i < queueLength - 1; i++)
-        {
-            if (platformQueue.ElementAt(i).transform.position.y < LowestYOfPlatform)
-            {
-                LowestYOfPlatform = platformQueue.ElementAt(i).transform.position.y;
-            }
-        }
-        return LowestYOfPlatform;
-    }
-    public float HighestYPosition()
-    {
-        float HighestYOfPlatform = platformQueue.ElementAt(queueLength - 1).transform.position.y;;
-        for (int i = 0; i < queueLength -1; i++)
-        {
-            if (platformQueue.ElementAt(i).transform.position.y > HighestYOfPlatform)
-            {
-                HighestYOfPlatform = platformQueue.ElementAt(i).transform.position.y;
-            }
-        }
-        return HighestYOfPlatform;
     }
     public void SpawnFromScratch()
     {

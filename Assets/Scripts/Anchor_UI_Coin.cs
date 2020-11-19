@@ -9,7 +9,6 @@ public class Anchor_UI_Coin : MonoBehaviour
     {
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
-    // Update is called once per frame
     private void Update()
     {
         SetMyPosition();
