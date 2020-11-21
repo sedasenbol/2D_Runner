@@ -29,7 +29,12 @@ public class Player : MonoBehaviour
         {
             isJumping = true;
         }
-
+        if(isGrounded && anim.enabled == false)
+        {
+            anim.enabled = true;
+            anim.Play("Run");
+            spawnManager.isPlayerFlying = false;
+        }
     }
     private void FixedUpdate()
     {
@@ -46,7 +51,7 @@ public class Player : MonoBehaviour
             MoveForward();
         }
         gameManager.IncreaseScore();
-        Debug.Log(rb.velocity);
+
     }
     private void MoveForward()
     {
@@ -63,8 +68,14 @@ public class Player : MonoBehaviour
     {
         if (new List<int> { 8, 10 }.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.isAlive)
         {
+            rb.velocity = new Vector2(0,0);
             gameManager.IsPlayerDead();
             anim.Play("Death");
+            if (collision.gameObject.layer == 10)
+            {
+                collision.gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
+                collision.gameObject.GetComponent<CapsuleCollider2D>().enabled = true; 
+            }
         }
         else if (collision.gameObject.layer == 9 && ZeroVelocityCheck())
         {
@@ -73,12 +84,7 @@ public class Player : MonoBehaviour
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 9 && ZeroVelocityCheck())
-        {
-            gameManager.IsPlayerDead();
-            anim.Play("Death");
-        }
-        else if (collision.gameObject.layer == 9)
+        if (collision.gameObject.layer == 9)
         {
             isGrounded = true;
         }
@@ -111,6 +117,7 @@ public class Player : MonoBehaviour
         rb.isKinematic = true;
         rb.position = new Vector3(transform.position.x, spawnManager.playerFlyingHeight, transform.position.z);
         rb.gravityScale = 0;
+        anim.Play("Jump");
         anim.enabled = false;
         spawnManager.isPlayerFlying = true;
         rb.rotation = 30f;
@@ -120,9 +127,7 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(FLYING_TIME);
         rb.gravityScale = 1;
-        spawnManager.isPlayerFlying = false;
         rb.rotation = 0f;
-        anim.enabled = true;
         rb.isKinematic = false;
     }
     private bool ZeroVelocityCheck()
