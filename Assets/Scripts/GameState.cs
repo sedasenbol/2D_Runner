@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class GameState
 {
-    public int hearts = 3;
-    public int coins = 0;
-    public int score = 0;
-    public State state = State.OnPlay;
-    public Scene scene = Scene.Game;
-    public bool isAlive = true;
     public enum State
     {
         Start,
@@ -27,4 +21,19 @@ public class GameState
         Start,
         Game,
     }
+    private int hearts = 3;
+    private int coins = 0;
+    private int score = 0;
+    private bool isAlive = true;
+    private State currentState = State.OnPlay;
+    private Scene currentScene = Scene.Game;
+    public int Hearts { get { return hearts; } set { hearts = value; } }
+    public int Coins { get { return coins; } set { coins = value; } }
+    public int Score { get { return score; } set { score = value; } }
+    public bool IsAlive { get { return isAlive; } set { isAlive= value; } }
+    public State CurrentState { get { return currentState; } set { currentState = value; } }
+    public Scene CurrentScene { get { return currentScene; } set { currentScene = value; } }
+
+
+
 }

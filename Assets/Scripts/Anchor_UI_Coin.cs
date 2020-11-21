@@ -5,6 +5,10 @@ using UnityEngine;
 public class Anchor_UI_Coin : MonoBehaviour
 {
     private Camera cam;
+    private void SetMyPosition()
+    {
+        transform.position = cam.ViewportToWorldPoint(new Vector3(0.958f, 0.834f, 1f));
+    }
     private void Start()
     {
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -13,9 +17,4 @@ public class Anchor_UI_Coin : MonoBehaviour
     {
         SetMyPosition();
     }
-    private void SetMyPosition()
-    {
-        transform.position = cam.ViewportToWorldPoint(new Vector3(0.958f, 0.834f, 1f));
-    }
-
 }

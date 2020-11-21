@@ -7,7 +7,7 @@ public class ConstantDistance : MonoBehaviour
 {
     private readonly Vector3 initialCameraPos = new Vector3(-10,-3,-10);
     private Vector3 initialDist;
-    public Vector3 cameraPos;
+    private Vector3 cameraPos;
     private void Start()
     {
         initialDist = transform.position - initialCameraPos;
@@ -16,5 +16,6 @@ public class ConstantDistance : MonoBehaviour
     {
         transform.position = cameraPos + initialDist;
     }
+    public Vector3 CameraPos { set { cameraPos = value; } }
 }
 

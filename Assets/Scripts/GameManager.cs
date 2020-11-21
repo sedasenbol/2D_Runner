@@ -9,117 +9,110 @@ public class GameManager : MonoBehaviour
     private UIManager uIManager;
     private SpawnManager spawnManager;
     private ConstantDistance[] constantDist;
-    private GameState gameState = new GameState();
-    public GameState StateOfTheGame => gameState;
-
-    private void Start()
-    {
-        uIManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
-        if (SceneManager.GetActiveScene().name == "Start")
-        {
-            gameState.state = GameState.State.Start;
-            gameState.scene = GameState.Scene.Start;
-            gameState.isAlive = false;
-        }
-        if (!gameState.isAlive)
-        {
-            return;
-        }
-        spawnManager = GetComponent<SpawnManager>();
-        player = GameObject.Find("Player").GetComponent<Player>();
-        constantDist = FindObjectsOfType<ConstantDistance>();
-    }
-    private void Update()
-    {
-        if (spawnManager)
-        {
-            spawnManager.Spawn();
-        }
-    }
+    private GameState stateOfTheGame = new GameState();
     public void StartCountDown()
     {
-        uIManager.isCountDownActive = true;
-        gameState.state = GameState.State.CountDown;
+        uIManager.IsCountDownActive = true;
+        stateOfTheGame.CurrentState = GameState.State.CountDown;
     }
     public void StartGame()
     {
-        gameState.state = GameState.State.OnPlay;
-        gameState.isAlive = true;
+        stateOfTheGame.CurrentState = GameState.State.OnPlay;
+        stateOfTheGame.IsAlive = true;
         SceneManager.LoadScene(1);
     }
     public void IncreaseScore()
     {
-        gameState.score++;
+        stateOfTheGame.Score++;
     }
-
     public void IsPlayerDead()
     {
-        gameState.hearts--;
-        gameState.isAlive = false;
-        if (gameState.hearts == 0)
+        stateOfTheGame.Hearts--;
+        stateOfTheGame.IsAlive = false;
+        if (stateOfTheGame.Hearts == 0)
         {
-            gameState.state = GameState.State.GameOver;
+            stateOfTheGame.CurrentState = GameState.State.GameOver;
             Application.Quit();
             return;
         }
-        gameState.state = GameState.State.IsDead;
+        stateOfTheGame.CurrentState = GameState.State.IsDead;
     }
     public void GetCoins()
     {
-        gameState.coins++;
+        stateOfTheGame.Coins++;
     }
     public void GetHearts()
     {
-        gameState.hearts++;
+        stateOfTheGame.Hearts++;
     }
-    public void SendCameraPosition(Vector3 cameraPos)
+    public void GetCameraPosition(Vector3 cameraPos)
     {
         for (int i = 0; i< constantDist.Length; i++)
         {
-            constantDist[i].cameraPos = cameraPos;
+            constantDist[i].CameraPos = cameraPos;
         }
     }
     private void PauseSwitch()
     {
-        if (gameState.state == GameState.State.Paused)
+        if (stateOfTheGame.CurrentState == GameState.State.Paused)
         {
-            gameState.state = GameState.State.Resuming;
-            gameState.state = GameState.State.OnPlay;
-            gameState.isAlive = true;
+            stateOfTheGame.CurrentState = GameState.State.Resuming;
+            stateOfTheGame.CurrentState = GameState.State.OnPlay;
+            stateOfTheGame.IsAlive = true;
         }
-        else if (gameState.state == GameState.State.OnPlay)
+        else
         {
-            gameState.isAlive = false;
-            gameState.state = GameState.State.Paused; 
-        }
-        else 
-        {
-            throw new System.Exception("Pause button is misplaced.");
+            stateOfTheGame.IsAlive = false;
+            stateOfTheGame.CurrentState = GameState.State.Paused; 
         }
         Time.timeScale = Mathf.Abs(Time.timeScale-1);
     }
     private void ReplayGame()
     {
         player.StartAgain();
-        if (gameState.state == GameState.State.IsDead)
+        if (stateOfTheGame.CurrentState == GameState.State.IsDead)
         {
-            gameState.state = GameState.State.Replaying;
-            gameState.score = 0;
-            gameState.coins = 0;
+            stateOfTheGame.CurrentState = GameState.State.Replaying;
+            stateOfTheGame.Score = 0;
+            stateOfTheGame.Coins = 0;
 
         }
-        else if (gameState.state == GameState.State.GameOver)
+        else if (stateOfTheGame.CurrentState == GameState.State.GameOver)
         {
-            gameState.state = GameState.State.Restarted;
-            gameState = new GameState();
+            stateOfTheGame.CurrentState = GameState.State.Restarted;
+            stateOfTheGame = new GameState();
         }
         else
         {
             throw new System.Exception("Play/replay button is misplaced.");
         }
         spawnManager.SpawnFromScratch();
-        gameState.state = GameState.State.OnPlay;
-        gameState.isAlive = true;
+        stateOfTheGame.CurrentState = GameState.State.OnPlay;
+        stateOfTheGame.IsAlive = true;
         Time.timeScale = 1;
     }
+    private void Start()
+    {
+        uIManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
+        if (SceneManager.GetActiveScene().name == "Start")
+        {
+            stateOfTheGame.CurrentState = GameState.State.Start;
+            stateOfTheGame.CurrentScene = GameState.Scene.Start;
+            stateOfTheGame.IsAlive = false;
+        }
+        if (stateOfTheGame.IsAlive)
+        {
+            spawnManager = GetComponent<SpawnManager>();
+            player = GameObject.Find("Player").GetComponent<Player>();
+            constantDist = FindObjectsOfType<ConstantDistance>();
+        }
+    }
+    private void Update()
+    {
+        if (spawnManager && stateOfTheGame.IsAlive)
+        {
+            spawnManager.Spawn();
+        }
+    }
+    public GameState StateOfTheGame { get { return stateOfTheGame; } }
 }

@@ -15,69 +15,23 @@ public class UIManager : MonoBehaviour
     private GameObject pauseButton;
     private GameObject resumeButton;
     private GameManager gameManager;
-    public bool isCountDownActive;
+    private bool isCountDownActive;
     private float timeLeft = 3;
-    private void Start()
-    {
-        gameManager = FindObjectOfType<GameManager>();
-        playButton = transform.Find("Canvas").Find("Play_Button").gameObject;
-        countDownText = transform.Find("Canvas").Find("Count_Down_Text").GetComponent<TMPro.TextMeshProUGUI>();
-        coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();      
-        scoreText = transform.Find("Canvas").Find("Score_Text").GetComponent<TMPro.TextMeshProUGUI>();  
-        heartsText = transform.Find("Canvas").Find("Hearts_Text").GetComponent<TMPro.TextMeshProUGUI>();
-        replayButton = transform.Find("Canvas").Find("Replay_Button").gameObject;
-        pauseButton = transform.Find("Canvas").Find("Pause_Button").gameObject;
-        resumeButton = transform.Find("Canvas").Find("Resume_Button").gameObject;
-    }
-
-    private void Update()
-    {
-        ShowOrHideButtons();
-        if (isCountDownActive)
-        {
-            timeLeft -= Time.deltaTime;
-            if (timeLeft < 0)
-            {
-                gameManager.StartGame();
-                isCountDownActive = false;
-                timeLeft = 3;
-            }
-            else if (timeLeft < 1)
-            {
-                countDownText.text = "1";
-            }
-            else if (timeLeft < 2)
-            {
-                countDownText.text = "2";
-            }
-            else if (timeLeft < 3)
-            {
-                countDownText.text = "3";
-            }
-        }
-        if (!gameManager.StateOfTheGame.isAlive)
-        {
-            return;
-        }
-        ShowCoins();
-        ShowHearts();
-        ShowScore();
-    }
     private void ShowCoins()
     {
-        coinText.text = (gameManager.StateOfTheGame.coins).ToString();
+        coinText.text = (gameManager.StateOfTheGame.Coins).ToString();
     }
     private void ShowScore()
     {
-        scoreText.text = gameManager.StateOfTheGame.score.ToString("0000000");
+        scoreText.text = gameManager.StateOfTheGame.Score.ToString("0000000");
     }
     private void ShowHearts()
     {
-        heartsText.text = gameManager.StateOfTheGame.hearts.ToString();
+        heartsText.text = gameManager.StateOfTheGame.Hearts.ToString();
     }
     private void ShowOrHideButtons()
     {
-        switch (gameManager.StateOfTheGame.state)
+        switch (gameManager.StateOfTheGame.CurrentState)
         {
             case GameState.State.Start:
                 countDownText.gameObject.SetActive(false);
@@ -161,7 +115,52 @@ public class UIManager : MonoBehaviour
                 scoreText.gameObject.SetActive(true);
                 break;
             default:
-                throw new Exception(String.Format("Unknown state:", gameManager.StateOfTheGame.state));
+                throw new Exception(String.Format("Unknown state:", gameManager.StateOfTheGame.CurrentState));
         }
     }
+    private void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        playButton = transform.Find("Canvas").Find("Play_Button").gameObject;
+        countDownText = transform.Find("Canvas").Find("Count_Down_Text").GetComponent<TMPro.TextMeshProUGUI>();
+        coinText = transform.Find("Canvas").Find("Coin_Text").GetComponent<TMPro.TextMeshProUGUI>();
+        scoreText = transform.Find("Canvas").Find("Score_Text").GetComponent<TMPro.TextMeshProUGUI>();
+        heartsText = transform.Find("Canvas").Find("Hearts_Text").GetComponent<TMPro.TextMeshProUGUI>();
+        replayButton = transform.Find("Canvas").Find("Replay_Button").gameObject;
+        pauseButton = transform.Find("Canvas").Find("Pause_Button").gameObject;
+        resumeButton = transform.Find("Canvas").Find("Resume_Button").gameObject;
+    }
+    private void Update()
+    {
+        ShowOrHideButtons();
+        if (isCountDownActive)
+        {
+            timeLeft -= Time.deltaTime;
+            if (timeLeft < 0)
+            {
+                gameManager.StartGame();
+                isCountDownActive = false;
+                timeLeft = 3;
+            }
+            else if (timeLeft < 1)
+            {
+                countDownText.text = "1";
+            }
+            else if (timeLeft < 2)
+            {
+                countDownText.text = "2";
+            }
+            else if (timeLeft < 3)
+            {
+                countDownText.text = "3";
+            }
+        }
+        if (gameManager.StateOfTheGame.IsAlive)
+        {
+            ShowCoins();
+            ShowHearts();
+            ShowScore();
+        }
+    }
+    public bool IsCountDownActive { set { isCountDownActive = value; } }
 }

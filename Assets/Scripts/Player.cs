@@ -4,16 +4,52 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private Rigidbody2D rb;
+    private const float FLYING_TIME = 5;
+    private const float FLYING_HEIGHT= 100;
     private const float FORWARD_VELOCITY = 15f;
     private const float JUMP_VELOCITY = 30f;
-    public bool isJumping = false;
+    private readonly Vector3 startPos = new Vector3(-17f, -4f, -4f);
     private bool isGrounded = true;
+    private bool isJumping = false;
+    private bool isFlying = false;
+    private Rigidbody2D rb;
     private Animator anim;
     private GameManager gameManager;
-    private readonly Vector3 startPos = new Vector3(-17f, -4f, -4f);
-    private const int FLYING_TIME = 5;
-    private SpawnManager spawnManager;
+    public void StartAgain()
+    {
+        transform.position = startPos;
+        anim.Play("Run");
+    }
+    private void MoveForward()
+    {
+        rb.velocity = new Vector2(FORWARD_VELOCITY, rb.velocity.y);
+    }
+    private void Jump()
+    {
+        rb.velocity = new Vector2(FORWARD_VELOCITY, JUMP_VELOCITY);
+        isJumping = false;
+        anim.Play("Jump");
+    }
+    private void FlyingPowerUp()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rb.isKinematic = true;
+        rb.position = new Vector3(transform.position.x, FLYING_HEIGHT, transform.position.z);
+        rb.gravityScale = 0;
+        anim.Play("Jump");
+        anim.enabled = false;
+        isFlying = true;
+        rb.rotation = 30f;
+        StartCoroutine(HitTheGround());
+    }
+    private IEnumerator HitTheGround()
+    {
+        yield return new WaitForSeconds(FLYING_TIME);
+        rb.gravityScale = 1;
+        rb.rotation = 0f;
+        rb.isKinematic = false;
+        isFlying = false;
+    }
     private void Start()
     {
         transform.position = startPos;
@@ -21,24 +57,22 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         anim.Play("Run");
         gameManager = FindObjectOfType<GameManager>();
-        spawnManager = FindObjectOfType<SpawnManager>();
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && gameManager.StateOfTheGame.isAlive && !isJumping)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && gameManager.StateOfTheGame.IsAlive && !isJumping)
         {
             isJumping = true;
         }
-        if(isGrounded && anim.enabled == false)
+        if(isGrounded && anim.enabled == false && !isFlying)
         {
             anim.enabled = true;
             anim.Play("Run");
-            spawnManager.isPlayerFlying = false;
         }
     }
     private void FixedUpdate()
     {
-        if (!gameManager.StateOfTheGame.isAlive)
+        if (!gameManager.StateOfTheGame.IsAlive)
         {
             return;
         }
@@ -53,20 +87,9 @@ public class Player : MonoBehaviour
         gameManager.IncreaseScore();
 
     }
-    private void MoveForward()
-    {
-        rb.velocity = new Vector2(FORWARD_VELOCITY, rb.velocity.y);
-    }
-    private void Jump()
-    {
-        isJumping = false;
-        isGrounded = false;
-        rb.velocity = new Vector2(FORWARD_VELOCITY / 5, JUMP_VELOCITY);
-        anim.Play("Jump");
-    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (new List<int> { 8, 10 }.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.isAlive)
+        if (new List<int> { 8, 10 }.Contains(collision.gameObject.layer) && gameManager.StateOfTheGame.IsAlive)
         {
             rb.velocity = new Vector2(0,0);
             gameManager.IsPlayerDead();
@@ -77,9 +100,9 @@ public class Player : MonoBehaviour
                 collision.gameObject.GetComponent<CapsuleCollider2D>().enabled = true; 
             }
         }
-        else if (collision.gameObject.layer == 9 && ZeroVelocityCheck())
+        else if (collision.gameObject.layer == 9)
         {
-            isGrounded = true;
+            //isGrounded = true;
         }
     }
     private void OnCollisionStay2D(Collision2D collision)
@@ -98,49 +121,20 @@ public class Player : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == 12 && gameManager.StateOfTheGame.isAlive)
+        if (collision.gameObject.layer == 12 && gameManager.StateOfTheGame.IsAlive)
         {
             gameManager.GetCoins();
         }
-        if (collision.gameObject.layer == 13 && gameManager.StateOfTheGame.isAlive)
+        if (collision.gameObject.layer == 13 && gameManager.StateOfTheGame.IsAlive)
         {
             gameManager.GetHearts();
         }
-        if (collision.gameObject.layer == 14 && gameManager.StateOfTheGame.isAlive)
+        if (collision.gameObject.layer == 14 && gameManager.StateOfTheGame.IsAlive)
         {
             FlyingPowerUp();
         }
     }
-    private void FlyingPowerUp()
-    {
-        rb.velocity = new Vector2(rb.velocity.x, 0);
-        rb.isKinematic = true;
-        rb.position = new Vector3(transform.position.x, spawnManager.playerFlyingHeight, transform.position.z);
-        rb.gravityScale = 0;
-        anim.Play("Jump");
-        anim.enabled = false;
-        spawnManager.isPlayerFlying = true;
-        rb.rotation = 30f;
-        StartCoroutine(HitTheGround());
-    }
-    IEnumerator HitTheGround()
-    {
-        yield return new WaitForSeconds(FLYING_TIME);
-        rb.gravityScale = 1;
-        rb.rotation = 0f;
-        rb.isKinematic = false;
-    }
-    private bool ZeroVelocityCheck()
-    {
-        if (rb.velocity.sqrMagnitude <= 1E-3f)
-        {
-            return true;
-        }
-        return false;
-    }
-    public void StartAgain()
-    {
-        transform.position = startPos;
-        anim.Play("Run");
-    }
+    public bool IsJumping { get { return isJumping; } }
+    public bool IsFlying { get { return isFlying; } }
+    public float FlyingHeight { get { return FLYING_HEIGHT; } }
 }
