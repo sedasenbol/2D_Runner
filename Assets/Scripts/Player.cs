@@ -76,7 +76,7 @@ public class Player : MonoBehaviour
         {
             return;
         }
-        if (isJumping && isGrounded)
+        if (isJumping)
         {
             Jump();
         }
@@ -99,10 +99,6 @@ public class Player : MonoBehaviour
                 collision.gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
                 collision.gameObject.GetComponent<CapsuleCollider2D>().enabled = true; 
             }
-        }
-        else if (collision.gameObject.layer == 9)
-        {
-            //isGrounded = true;
         }
     }
     private void OnCollisionStay2D(Collision2D collision)
