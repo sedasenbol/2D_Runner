@@ -11,6 +11,7 @@ public class CameraFollow : MonoBehaviour
     private float yMaxOfCam;
     private float yMinOfCam;
     private float yStep;
+    private float camSpeed = 30f;
     private void Move()
     {
         yMaxOfCam = cam.ViewportToWorldPoint(new Vector3(0, 1, 0)).y;
@@ -21,15 +22,15 @@ public class CameraFollow : MonoBehaviour
         }
         else if (gameManager.StateOfTheGame.IsAlive && playerTransform.position.y < yMaxOfCam - 3f && playerTransform.position.y > yMinOfCam + 3f)
         {
-            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y, transform.position.z), 30 * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y, transform.position.z), camSpeed * Time.deltaTime);
         }
         else if (gameManager.StateOfTheGame.IsAlive && playerTransform.position.y >= yMaxOfCam - 3f)
         {
-            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y + yStep, transform.position.z), 30 * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y + yStep, transform.position.z), camSpeed * Time.deltaTime);
         }
         else if (gameManager.StateOfTheGame.IsAlive && playerTransform.position.y <= yMinOfCam + 3f)
         {
-            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y - yStep, transform.position.z), 30 * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y - yStep, transform.position.z), camSpeed * Time.deltaTime);
         }
         gameManager.GetCameraPosition(transform.position);
     }
