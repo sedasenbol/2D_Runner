@@ -5,23 +5,31 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     private GameManager gameManager;
-    private GameObject player;
     private Player playerScript;
-    private Vector3 lastPos;
-    private void MoveForward()
+    private Transform playerTransform;
+    private Camera cam;
+    private float yMaxOfCam;
+    private float yMinOfCam;
+    private float yStep;
+    private void Move()
     {
-        if (gameManager.StateOfTheGame.IsAlive && !playerScript.IsJumping)
+        yMaxOfCam = cam.ViewportToWorldPoint(new Vector3(0, 1, 0)).y;
+        yMinOfCam = cam.ViewportToWorldPoint(new Vector3(0, 0, 0)).y;
+        if (!gameManager.StateOfTheGame.IsAlive || playerScript.IsFlying)
         {
-            transform.position = new Vector3(player.transform.position.x + 7f, player.transform.position.y + 1f, transform.position.z);
-            lastPos = transform.position;
+            transform.position = new Vector3(playerTransform.position.x + 1f, playerTransform.position.y + 0.5f, transform.position.z);
         }
-        else if (gameManager.StateOfTheGame.IsAlive && playerScript.IsJumping)
+        else if (gameManager.StateOfTheGame.IsAlive && playerTransform.position.y < yMaxOfCam - 3f && playerTransform.position.y > yMinOfCam + 3f)
         {
-            transform.position = new Vector3(player.transform.position.x + 7f, lastPos.y, transform.position.z);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y, transform.position.z), 30 * Time.deltaTime);
         }
-        else
+        else if (gameManager.StateOfTheGame.IsAlive && playerTransform.position.y >= yMaxOfCam - 3f)
         {
-            transform.position = new Vector3(player.transform.position.x + 1f, player.transform.position.y + 1f, transform.position.z);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y + yStep, transform.position.z), 30 * Time.deltaTime);
+        }
+        else if (gameManager.StateOfTheGame.IsAlive && playerTransform.position.y <= yMinOfCam + 3f)
+        {
+            transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x + 7f, transform.position.y - yStep, transform.position.z), 30 * Time.deltaTime);
         }
         gameManager.GetCameraPosition(transform.position);
     }
@@ -29,11 +37,13 @@ public class CameraFollow : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         gameManager.GetCameraPosition(transform.position);
-        player = GameObject.Find("Player");
-        playerScript = player.GetComponent<Player>();
+        playerTransform = GameObject.Find("Player").GetComponent<Transform>();
+        playerScript = GameObject.Find("Player").GetComponent<Player>();
+        cam = GetComponent<Camera>();
+        yStep = GameObject.FindObjectOfType<SpawnManager>().VerticalGap;
     }
     private void Update()
     {
-        MoveForward();
+        Move();
     }
 }

@@ -182,4 +182,5 @@ public class SpawnManager : MonoBehaviour
         SpawnInitialization();
     }
     public float LowestYOfPlatform { get { return lowestYOfPlatform; } }
+    public float VerticalGap { get { return verticalGap.y; } }
 }
